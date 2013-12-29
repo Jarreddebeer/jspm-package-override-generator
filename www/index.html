@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <script src="jspm_packages/npm/underscore@1.5.2/underscore.js"></script>
+    <script src="jspm_packages/github/components/jquery@2.0.3/jquery.js"></script>
+    <script src="jspm_packages/npm/backbone@1.1.0/backbone.js"></script>
+    <script src="lib/main.js"></script>
+
+    <style>
+        input {
+            margin: 10px 0;
+        }
+        label {
+            width: 150px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        button, .row ul {
+            display: none;
+        }
+        .row {
+            display: block;
+            width: 100%;
+            overflow: hidden;
+        }
+        .sub {
+            display: none;
+            width: 100%;
+            overflow: hidden;
+        }
+        .sub label {
+            margin-left: 50px;
+        }
+        .visible .sub, ul.visible, .visible ~ button {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+<form id="form" class="container">
+
+    <div class="row">
+            <label>Main</label>
+            <input type="checkbox" name="main-toggle" disabled />
+            <input type="text" id="main" name="main" />
+    </div>
+
+    <div class="row">
+            <label>Format</label>
+            <input type="checkbox" name="format-toggle" disabled />
+            <input type="text" id="format" name="format"  />
+    </div>
+
+    <div class="row">
+        <label>Directories</label>
+        <input type="checkbox" name="directories-toggle" />
+        <ul>
+            <li>
+                <label>lib</label>
+                <input type="checkbox" name="lib-toggle" disabled />
+                <input type="text" name="lib">
+            </li>
+            <li>
+                <label>dist</label>
+                <input type="checkbox" name="dist-toggle" disabled />
+                <input type="text" name="dist">
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+            <label>files</label>
+            <input type="checkbox" name="files-toggle" />
+            <ul>
+                <li>
+                    <input type="text" />
+                </li>
+            </ul>
+            <button class="add">Add</button>
+            <button class="remove">Remove</button>
+    </div>
+
+    <div class="map row">
+        <label>Map</label>
+        <input type="checkbox" name="map-toggle" />
+        <ul class="pairs">
+            <li>
+                <input type="text" />: <input type="text" />
+            </li>
+        </ul>
+        <button class="add">Add</button>
+        <button class="remove">Remove</button>
+    </div>
+
+    <div class="row">
+        <label for="shim">Shim</label>
+        <input type="checkbox" name="shim-toggle" />
+        <ul>
+            <li>
+                <label>imports: </label>
+                <input type="checkbox" name="imports-toggle" />
+                <ul>
+                    <li>
+                        <input type="text" />
+                    </li>
+                </ul>
+                <button class="add">Add</button>
+                <button class="remove">Remove</button>
+            </li>
+            <li>
+                <label>exports: </label>
+                <input type="checkbox" name="exports-toggle" disabled />
+                <input type="text" name="exports" />
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="row">
+        <label for="buildconfig">BuildConfig</label>
+        <input type="checkbox" name="buildconfig-toggle" />
+        <div class="sub row">
+            <label for="uglify">Uglify</label>
+            <input type="checkbox" name="uglify" id="uglify">
+            <br />
+            <label for="traceur">Traceur</label>
+            <input type="checkbox" name="traceur" id="traceur">
+            <br />
+        </div>
+    </div>
+
+</form>
+
+</body>
+</html>
