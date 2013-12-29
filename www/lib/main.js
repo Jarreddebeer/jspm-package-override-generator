@@ -5,6 +5,7 @@ var override_model = Backbone.Model.extend({
         main: null,
         format: null,
         directories: null,
+        files: null,
         map: null,
         shim: null,
         buildConfig: null
@@ -16,42 +17,103 @@ var override_view = Backbone.View.extend({
 
     events: {
         'keyup input[type="text"]': 'activateEntry',
-        'change input[type="text"]': 'updateModel',
-        'change input[type="checkbox"]': 'toggleSubList',
+        'change input[type="text"]': 'parseFields',
+        'change input[type="checkbox"]': 'parseFields',
         'click button.add': 'addLi',
-        'click button.remove': 'removeLi'
+        'click button.remove': 'removeLi',
+        'click #generate': 'generate'
     },
 
     activateEntry: function(e) {
-        var v = e.target.value;
-        var checked = v.length > 0;
-        $(e.target).prev().prop('checked', checked);
+        // make sure not plain field
+        if (typeof e.target.attributes.name != 'unfefined') {
+            var v = e.target.value;
+            var active = v.length > 0;
+            $(e.target).prev().prop('checked', active);
+        }
     },
 
-    updateModel: function(e) {
-        var field = e.target.attributes.name.value;
-        var value = e.target.value;
-        switch (field) {
-            case 'main':
-                this.setModelField(field, value);
-            case 'format':
-                this.setModelField(field, value);
-            case 'lib':
-                this.parseDirectories();
-            case 'dist':
-                this.parseDirectories();
+    parseFields: function(e) {
+        if (e.target.attributes.type.value == 'checkbox' && e.target.attributes.name.value.indexOf('toggle') != -1) {
+            this.toggleSubList(e);
+        } else {
+            this.updateModelField(e);
+        }
+    },
 
+    updateModelField: function(e) {
+        var field, value;
+        if (typeof e.target.attributes.name != 'undefined') {
+            field = e.target.attributes.name.value;
+        } else {
+            // handle plain text fields differently
+            field = $(e.target).parent().parent().parent()
+            .find('input[type="checkbox"]').attr('name').split('-')[0];
+        }
+
+        switch (field) {
+
+            case 'main':
+                console.log('a');
+                value = e.target.value;
+                this.setModelField(field, value);
+                break;
+
+            case 'format':
+                console.log('b');
+                value = e.target.value;
+                this.setModelField(field, value);
+                break;
+
+            case 'lib':
+                console.log('c');
+                this.parseDirectories();
+                break;
+
+            case 'dist':
+                console.log('d');
+                this.parseDirectories();
+                break;
+
+            case 'files':
+                console.log('e');
+                this.parseFiles();
+                break;
+
+            case 'map':
+                console.log('f');
+                this.parseMap();
+                break;
+
+            case 'imports':
+                console.log('g');
+                this.parseShim();
+                break;
+
+            case 'exports':
+                console.log('h');
+                this.parseShim();
+                break;
+
+            case 'uglify':
+                console.log('i');
+                this.parseBuildConfig();
+                break;
+
+            case 'traceur':
+                console.log('j');
+                this.parseBuildConfig();
+                break;
         }
     },
 
     setModelField: function(field, value) {
         this.model.set(field, value)
-        console.log(this.model.attributes);
     },
 
     parseDirectories: function() {
-        var lib_set  = $('input[name="lib-toggle"]').is(':checked');
-        var dist_set = $('input[name="dist-toggle"]').is(':checked');
+        var lib_set  = this.$('input[name="lib-toggle"]').is(':checked');
+        var dist_set = this.$('input[name="dist-toggle"]').is(':checked');
         var d = {};
         if (lib_set) {
             d.lib  = $('input[name="lib"]').val();
@@ -63,11 +125,80 @@ var override_view = Backbone.View.extend({
             d = null;
         }
         this.model.set('directories', d);
-        console.log(this.model);
+    },
+
+    parseFiles: function() {
+        var ary = [];
+        this.$('#files').children().each(function(i, li) {
+            var val = $(li).children(0).val();
+            if (val.length > 0) {
+                ary.push(val);
+            }
+        });
+        if (ary.length > 0) {
+            this.model.set('files', ary);
+        } else {
+            this.model.set('files', null);
+        }
+    },
+
+    parseMap: function() {
+        var hash = {};
+        this.$('#map').children().each(function(i, li) {
+            var inputs = $(li).find('input');
+            if (inputs[0].value.length > 0 && inputs[1].value.length > 0) {
+                hash[inputs[0].value] = inputs[1].value;
+            }
+        });
+        this.model.set('map', hash);
+    },
+
+    parseShim: function() {
+        var imp_set = this.$('input[name="imports-toggle"]').is(':checked');
+        var exp_set = this.$('input[name="exports-toggle"]').is(':checked');
+        var $imp_ul = this.$('#imports');
+        var imps = this.eachInputsVal($imp_ul);
+        var obj;
+        if (imp_set && !exp_set) {
+            obj = imps;
+        } else if (imp_set && exp_set) {
+            var exp = this.$('input[name="exports"]').val();
+            obj = {imports: imps, exports: exp}
+        }
+        this.model.set('shim', obj);
+    },
+
+    parseBuildConfig: function() {
+        var ugl_set = this.$('input[name="uglify"]').is(':checked');
+        var tra_set = this.$('input[name="traceur"]').is(':checked');
+        if (!ugl_set && !tra_set) {
+            this.model.set('buildConfig', null);
+        } else {
+            var obj = {};
+            if (ugl_set) {
+                obj.uglify = true;
+            }
+            if (tra_set) {
+                obj.traceur = true;
+            }
+            this.model.set('buildConfig', obj);
+        }
+    },
+
+    // returns an array of values from each input in a list
+    eachInputsVal: function($ul) {
+        var ary = [],
+            val;
+        $ul.children().each(function(i, li) {
+            val = $(li).children(0).val();
+            if (val.length > 0) {
+                ary.push(val);
+            }
+        });
+        return ary;
     },
 
     toggleSubList: function(e) {
-        console.log(e);
         $e = $(e.target);
         $p = $e.parent()
         $p.find('> ul').toggleClass('visible');
@@ -80,11 +211,18 @@ var override_view = Backbone.View.extend({
         $ul = $e.parent().find('> ul');
         $ul.find('input[type="text"]').val('');
         $ul.find('input[type="checkbox"]').prop('checked', false);
-        //
         var name = $e.attr('name').split('-')[0];
+        // clear added entry fields
+        switch (name) {
+            case 'files':
+                $ul.children().each(function(i, li) {
+                    if (i != 0) {
+                        $(li).remove();
+                    }
+                });
+        }
+        //
         this.model.set(name, null);
-        console.log('cleared.');
-        console.log(this.model);
     },
 
     addLi: function(e) {
@@ -105,6 +243,41 @@ var override_view = Backbone.View.extend({
 
     getTargetUl: function(e) {
         return $(e.target).parent().find('ul');
+    },
+
+    generate: function(e) {
+        e.preventDefault();
+        var        main = this.model.get('main'),
+                 format = this.model.get('format'),
+            directories = this.model.get('directories'),
+                  files = this.model.get('files'),
+                    map = this.model.get('map'),
+                   shim = this.model.get('shim'),
+            buildConfig = this.model.get('buildConfig'),
+                    out = {}
+
+        if (main != null) {
+            out.main = main;
+        }
+        if (format != null) {
+            out.format = format;
+        }
+        if (directories != null) {
+            out.directories = directories;
+        }
+        if (files != null) {
+            out.files = files
+        }
+        if (map != null) {
+            out.map = map;
+        }
+        if (shim != null) {
+            out.shim = shim;
+        }
+        if (buildConfig != null) {
+            out.buildConfig = buildConfig;
+        }
+        this.$('#output').html(JSON.stringify(out));
     },
 
     render: function() {

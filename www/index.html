@@ -36,6 +36,9 @@
         .visible .sub, ul.visible, .visible ~ button {
             display: block;
         }
+        #generate {
+            display: block;
+        }
     </style>
 </head>
 
@@ -57,7 +60,7 @@
 
     <div class="row">
         <label>Directories</label>
-        <input type="checkbox" name="directories-toggle" />
+        <input type="checkbox" class="toggle" name="directories-toggle" />
         <ul>
             <li>
                 <label>lib</label>
@@ -73,21 +76,21 @@
     </div>
 
     <div class="row">
-            <label>files</label>
-            <input type="checkbox" name="files-toggle" />
-            <ul>
-                <li>
-                    <input type="text" />
-                </li>
-            </ul>
-            <button class="add">Add</button>
-            <button class="remove">Remove</button>
+        <label>files</label>
+        <input type="checkbox" class="toggle" name="files-toggle" />
+        <ul id="files">
+            <li>
+                <input type="text" />
+            </li>
+        </ul>
+        <button class="add">Add</button>
+        <button class="remove">Remove</button>
     </div>
 
-    <div class="map row">
+    <div class="row">
         <label>Map</label>
-        <input type="checkbox" name="map-toggle" />
-        <ul class="pairs">
+        <input type="checkbox" class="toggle" name="map-toggle" />
+        <ul id="map" class="pairs">
             <li>
                 <input type="text" />: <input type="text" />
             </li>
@@ -98,12 +101,12 @@
 
     <div class="row">
         <label for="shim">Shim</label>
-        <input type="checkbox" name="shim-toggle" />
+        <input type="checkbox" class="toggle" name="shim-toggle" />
         <ul>
             <li>
                 <label>imports: </label>
                 <input type="checkbox" name="imports-toggle" />
-                <ul>
+                <ul id="imports">
                     <li>
                         <input type="text" />
                     </li>
@@ -119,19 +122,26 @@
         </ul>
     </div>
 
-
     <div class="row">
         <label for="buildconfig">BuildConfig</label>
-        <input type="checkbox" name="buildconfig-toggle" />
-        <div class="sub row">
-            <label for="uglify">Uglify</label>
-            <input type="checkbox" name="uglify" id="uglify">
-            <br />
-            <label for="traceur">Traceur</label>
-            <input type="checkbox" name="traceur" id="traceur">
-            <br />
-        </div>
+        <input type="checkbox" class="toggle" name="buildconfig-toggle" />
+        <ul id="buildConfig">
+            <li>
+                <label for="uglify">Uglify</label>
+                <input type="checkbox" name="uglify">
+            </li>
+            <li>
+                <label for="traceur">Traceur</label>
+                <input type="checkbox" name="traceur">
+            </li>
+        </ul>
     </div>
+
+    <div class="row">
+        <button id="generate">Generate</button>
+    </div>
+
+    <div id="output"></div>
 
 </form>
 
