@@ -8,6 +8,8 @@
     "url": "https://github.com/Jarreddebeer/jspm-package-override-generator.git"
   },
   "dependencies": {
-    "nodegit": "~0.1.0"
+    "nodegit": "~0.1.0",
+    "path": "~0.4.9",
+    "express": "~3.4.7"
   }
 }

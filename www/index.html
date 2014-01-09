@@ -39,23 +39,28 @@
         #generate {
             display: block;
         }
+        textarea {
+            width: 80%;
+            height: 250px;
+        }
     </style>
 </head>
 
 <body>
 
 <div id="package">
-
-</div>
-
-<div id="override" class="container">
-
     <h3>Package Details</h3>
     <div class="row">
         <label>Github URL</label>
         <input type="text" name="github" placeholder="Enter github repo url" />
     </div>
+    <div class="row">
+        <label>Version</label>
+        <input type="text" name="version" placeholder="Version number from tags in repo" />
+    </div>
+</div>
 
+<div id="override" class="container">
     <h3>Override Details</h3>
 
     <div class="row">
@@ -153,9 +158,9 @@
         <button id="generate">Generate</button>
     </div>
 
-    <div id="output"></div>
-
 </form>
+
+<textarea id="output"></textarea>
 
 <script>
     $(function() {

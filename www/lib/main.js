@@ -9,7 +9,7 @@ var package_model = Backbone.Model.extend({
 });
 
 var package_view = Backbone.View.extend({
-    el: 'package',
+    el: '#package',
 
     events: {
         'change input[name="github"]': 'setLocations',
@@ -18,10 +18,10 @@ var package_view = Backbone.View.extend({
 
     setLocations: function(e) {
         var url = e.target.value;
-        var parser = document.createElement(a);
-        parser.href = url;
+        var a = document.createElement('a');
+        a.href = url;
         var paths = a.pathname.split('/');
-        if (paths.length != 3) {
+        if (paths.length == 3) {
             this.model.set('folder', paths[1]);
             this.model.set('filename', paths[2]);
         } else {
@@ -53,6 +53,7 @@ var override_view = Backbone.View.extend({
     events: {
         'keyup input[type="text"]': 'activateEntry',
         'change input[type="checkbox"]': 'toggleSubList',
+        'change input[type="text"]': 'plainTextChange',
 
         'change input[name="main"]': 'setModelField',
         'change input[name="format"]': 'setModelField',
@@ -66,7 +67,7 @@ var override_view = Backbone.View.extend({
         'change input[name="traceur"]': 'parseBuildConfig',
 
         'click button.add': 'addLi',
-        'click button.remove': 'removeLi',
+        'click button.remove': 'removeLi'
     },
 
     activateEntry: function(e) {
@@ -82,6 +83,22 @@ var override_view = Backbone.View.extend({
         var field = e.target.attributes.name.value;
         var value = e.target.value;
         this.model.set(field, value)
+    },
+
+    plainTextChange: function(e) {
+        if (typeof e.target.attributes.name == 'undefined') {
+            field = $(e.target).parent().parent().parent()
+            .find('input[type="checkbox"]').attr('name').split('-')[0];
+
+            switch (field) {
+                case 'files':
+                    this.parseFiles();
+                    break;
+                case 'map':
+                    this.parseMap();
+                    break;
+            }
+        }
     },
 
     parseDirectories: function() {
@@ -225,13 +242,17 @@ var override_view = Backbone.View.extend({
 });
 
 var pm = new package_model();
+var pv = new package_view({ model: pm });
 
 var om = new override_model();
 var ov = new override_view({ model: om });
 
 $('#generate').click(function() {
-    var data = om.toJSON();
-    console.log(data);
+    var package_data  = JSON.stringify( pm.toJSON(), null, 2);
+    var override_data = JSON.stringify( om.toJSON(), null, 2);
+    $('#output').val(override_data);
+
+    console.log(pm.toJSON());
 });
 
 });
