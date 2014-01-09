@@ -1,5 +1,40 @@
 $(function() {
 
+var package_model = Backbone.Model.extend({
+    defaults: {
+        folder: null,
+        filename: null,
+        version: null
+    }
+});
+
+var package_view = Backbone.View.extend({
+    el: 'package',
+
+    events: {
+        'change input[name="github"]': 'setLocations',
+        'change input[name="version"]': 'setVersion'
+    },
+
+    setLocations: function(e) {
+        var url = e.target.value;
+        var parser = document.createElement(a);
+        parser.href = url;
+        var paths = a.pathname.split('/');
+        if (paths.length != 3) {
+            this.model.set('folder', paths[1]);
+            this.model.set('filename', paths[2]);
+        } else {
+            this.$('input[name="github"]').val('');
+            this.$('input[name="github"]').attr('placeholder', 'I think the URL was invalid.');
+        }
+    },
+
+    setVersion: function(e) {
+
+    }
+});
+
 var override_model = Backbone.Model.extend({
     defaults: {
         main: null,
@@ -13,15 +48,25 @@ var override_model = Backbone.Model.extend({
 });
 
 var override_view = Backbone.View.extend({
-    el: '#form',
+    el: '#override',
 
     events: {
         'keyup input[type="text"]': 'activateEntry',
-        'change input[type="text"]': 'parseFields',
-        'change input[type="checkbox"]': 'parseFields',
+        'change input[type="checkbox"]': 'toggleSubList',
+
+        'change input[name="main"]': 'setModelField',
+        'change input[name="format"]': 'setModelField',
+        'change input[name="lib"]': 'parseDirectories',
+        'change input[name="dist"]': 'parseDirectories',
+        'change input[name="files"]': 'parseFiles',
+        'change input[name="map"]': 'parseMap',
+        'change input[name="imports"]': 'parseShim',
+        'change input[name="exports"]': 'parseShim',
+        'change input[name="uglify"]': 'parseBuildConfig',
+        'change input[name="traceur"]': 'parseBuildConfig',
+
         'click button.add': 'addLi',
         'click button.remove': 'removeLi',
-        'click #generate': 'generate'
     },
 
     activateEntry: function(e) {
@@ -33,81 +78,9 @@ var override_view = Backbone.View.extend({
         }
     },
 
-    parseFields: function(e) {
-        if (e.target.attributes.type.value == 'checkbox' && e.target.attributes.name.value.indexOf('toggle') != -1) {
-            this.toggleSubList(e);
-        } else {
-            this.updateModelField(e);
-        }
-    },
-
-    updateModelField: function(e) {
-        var field, value;
-        if (typeof e.target.attributes.name != 'undefined') {
-            field = e.target.attributes.name.value;
-        } else {
-            // handle plain text fields differently
-            field = $(e.target).parent().parent().parent()
-            .find('input[type="checkbox"]').attr('name').split('-')[0];
-        }
-
-        switch (field) {
-
-            case 'main':
-                console.log('a');
-                value = e.target.value;
-                this.setModelField(field, value);
-                break;
-
-            case 'format':
-                console.log('b');
-                value = e.target.value;
-                this.setModelField(field, value);
-                break;
-
-            case 'lib':
-                console.log('c');
-                this.parseDirectories();
-                break;
-
-            case 'dist':
-                console.log('d');
-                this.parseDirectories();
-                break;
-
-            case 'files':
-                console.log('e');
-                this.parseFiles();
-                break;
-
-            case 'map':
-                console.log('f');
-                this.parseMap();
-                break;
-
-            case 'imports':
-                console.log('g');
-                this.parseShim();
-                break;
-
-            case 'exports':
-                console.log('h');
-                this.parseShim();
-                break;
-
-            case 'uglify':
-                console.log('i');
-                this.parseBuildConfig();
-                break;
-
-            case 'traceur':
-                console.log('j');
-                this.parseBuildConfig();
-                break;
-        }
-    },
-
-    setModelField: function(field, value) {
+    setModelField: function(e) {
+        var field = e.target.attributes.name.value;
+        var value = e.target.value;
         this.model.set(field, value)
     },
 
@@ -245,48 +218,20 @@ var override_view = Backbone.View.extend({
         return $(e.target).parent().find('ul');
     },
 
-    generate: function(e) {
-        e.preventDefault();
-        var        main = this.model.get('main'),
-                 format = this.model.get('format'),
-            directories = this.model.get('directories'),
-                  files = this.model.get('files'),
-                    map = this.model.get('map'),
-                   shim = this.model.get('shim'),
-            buildConfig = this.model.get('buildConfig'),
-                    out = {}
-
-        if (main != null) {
-            out.main = main;
-        }
-        if (format != null) {
-            out.format = format;
-        }
-        if (directories != null) {
-            out.directories = directories;
-        }
-        if (files != null) {
-            out.files = files
-        }
-        if (map != null) {
-            out.map = map;
-        }
-        if (shim != null) {
-            out.shim = shim;
-        }
-        if (buildConfig != null) {
-            out.buildConfig = buildConfig;
-        }
-        this.$('#output').html(JSON.stringify(out));
-    },
-
     render: function() {
         this.$el.html(this.template());
         return this;
     }
 });
 
+var pm = new package_model();
+
 var om = new override_model();
 var ov = new override_view({ model: om });
+
+$('#generate').click(function() {
+    var data = om.toJSON();
+    console.log(data);
+});
 
 });

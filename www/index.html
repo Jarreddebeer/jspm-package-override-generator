@@ -44,7 +44,19 @@
 
 <body>
 
-<form id="form" class="container">
+<div id="package">
+
+</div>
+
+<div id="override" class="container">
+
+    <h3>Package Details</h3>
+    <div class="row">
+        <label>Github URL</label>
+        <input type="text" name="github" placeholder="Enter github repo url" />
+    </div>
+
+    <h3>Override Details</h3>
 
     <div class="row">
             <label>Main</label>
@@ -144,6 +156,16 @@
     <div id="output"></div>
 
 </form>
+
+<script>
+    $(function() {
+
+        $.get('/commits', function(data) {
+            console.log(data);
+        });
+
+    });
+</script>
 
 </body>
 </html>
