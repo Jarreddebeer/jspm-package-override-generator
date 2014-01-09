@@ -1,0 +1,13 @@
+{
+  "name": "override-adder",
+  "version": "0.0.0",
+  "description": "Add package overrides to jspm registry",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jarreddebeer/jspm-package-override-generator.git"
+  },
+  "dependencies": {
+    "nodegit": "~0.1.0"
+  }
+}
