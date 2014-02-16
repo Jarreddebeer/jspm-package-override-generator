@@ -3,164 +3,177 @@
 
 <head>
 
+    <link rel="stylesheet" href="/css/style.css">
+
     <script src="jspm_packages/npm/underscore@1.5.2/underscore.js"></script>
     <script src="jspm_packages/github/components/jquery@2.0.3/jquery.js"></script>
     <script src="jspm_packages/npm/backbone@1.1.0/backbone.js"></script>
     <script src="lib/main.js"></script>
 
-    <style>
-        input {
-            margin: 10px 0;
-        }
-        label {
-            width: 150px;
-            display: inline-block;
-            margin: 10px 0;
-        }
-        button, .row ul {
-            display: none;
-        }
-        .row {
-            display: block;
-            width: 100%;
-            overflow: hidden;
-        }
-        .sub {
-            display: none;
-            width: 100%;
-            overflow: hidden;
-        }
-        .sub label {
-            margin-left: 50px;
-        }
-        .visible .sub, ul.visible, .visible ~ button {
-            display: block;
-        }
-        #generate {
-            display: block;
-        }
-        textarea {
-            width: 80%;
-            height: 250px;
-        }
-    </style>
 </head>
 
 <body>
 
-<div id="package">
-    <h3>Package Details</h3>
-    <div class="row">
-        <label>Github URL</label>
-        <input type="text" name="github" placeholder="Enter github repo url" />
+<div class="row container">
+
+    <div id="package">
+        <h3>Package Details</h3>
+        <div class="row">
+            <label>Github URL</label>
+            <input type="text" name="github" placeholder="Enter github repo url" />
+        </div>
+        <div class="row">
+            <label>Version</label>
+            <input type="text" name="version" placeholder="Version number from tags in repo" />
+        </div>
     </div>
-    <div class="row">
-        <label>Version</label>
-        <input type="text" name="version" placeholder="Version number from tags in repo" />
-    </div>
+
 </div>
+<div class="row container">
+    <div class="col">
 
-<div id="override" class="container">
-    <h3>Override Details</h3>
+        <div id="override">
+            <h3>Override Details</h3>
 
-    <div class="row">
-            <label>Main</label>
-            <input type="checkbox" name="main-toggle" disabled />
-            <input type="text" id="main" name="main" />
-    </div>
+            <div class="row">
+                    <label>Main</label>
+                    <input type="checkbox" name="main-toggle" disabled />
+                    <input type="text" id="main" name="main" />
+            </div>
 
-    <div class="row">
-            <label>Format</label>
-            <input type="checkbox" name="format-toggle" disabled />
-            <input type="text" id="format" name="format"  />
-    </div>
+            <div class="row">
+                    <label>Browser</label>
+                    <input type="checkbox" name="browser-toggle" disabled />
+                    <input type="text" id="browser" name="browser" />
+            </div>
 
-    <div class="row">
-        <label>Directories</label>
-        <input type="checkbox" class="toggle" name="directories-toggle" />
-        <ul>
-            <li>
-                <label>lib</label>
-                <input type="checkbox" name="lib-toggle" disabled />
-                <input type="text" name="lib">
-            </li>
-            <li>
-                <label>dist</label>
-                <input type="checkbox" name="dist-toggle" disabled />
-                <input type="text" name="dist">
-            </li>
-        </ul>
-    </div>
+            <div class="row">
+                    <label>Registry</label>
+                    <select id="registry" name="registry">
+                        <option value="npm">npm</option>
+                        <option value="jspm">jspm</option>
+                    </select>
+            </div>
 
-    <div class="row">
-        <label>files</label>
-        <input type="checkbox" class="toggle" name="files-toggle" />
-        <ul id="files">
-            <li>
-                <input type="text" />
-            </li>
-        </ul>
-        <button class="add">Add</button>
-        <button class="remove">Remove</button>
-    </div>
+            <div class="row">
+                    <label>Dependencies</label>
+                    <input type="checkbox" name="dependencies-toggle" disabled />
+                    <input type="text" id="dependencies" name="dependencies" />
+            </div>
 
-    <div class="row">
-        <label>Map</label>
-        <input type="checkbox" class="toggle" name="map-toggle" />
-        <ul id="map" class="pairs">
-            <li>
-                <input type="text" />: <input type="text" />
-            </li>
-        </ul>
-        <button class="add">Add</button>
-        <button class="remove">Remove</button>
-    </div>
+            <div class="row">
+                    <label>Format</label>
+                    <select id="format" name="format">
+                        <option value="">Please select</option>
+                        <option value="global">global</option>
+                        <option value="amd">amd</option>
+                        <option value="cjs">cjs</option>
+                        <option value="es6">es6</option>
+                    </select>
+            </div>
 
-    <div class="row">
-        <label for="shim">Shim</label>
-        <input type="checkbox" class="toggle" name="shim-toggle" />
-        <ul>
-            <li>
-                <label>imports: </label>
-                <input type="checkbox" name="imports-toggle" />
-                <ul id="imports">
+            <div class="row">
+                <label>Directories</label>
+                <input type="checkbox" class="toggle" name="directories-toggle" />
+                <ul>
+                    <li>
+                        <label>lib</label>
+                        <input type="checkbox" name="lib-toggle" disabled />
+                        <input type="text" name="lib">
+                    </li>
+                    <li>
+                        <label>dist</label>
+                        <input type="checkbox" name="dist-toggle" disabled />
+                        <input type="text" name="dist">
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <label>files</label>
+                <input type="checkbox" class="toggle" name="files-toggle" />
+                <ul id="files">
                     <li>
                         <input type="text" />
                     </li>
                 </ul>
                 <button class="add">Add</button>
                 <button class="remove">Remove</button>
-            </li>
-            <li>
-                <label>exports: </label>
-                <input type="checkbox" name="exports-toggle" disabled />
-                <input type="text" name="exports" />
-            </li>
-        </ul>
+            </div>
+
+            <div class="row">
+                <label>ignore</label>
+                <input type="checkbox" class="toggle" name="ignore-toggle" />
+                <ul id="ignore">
+                    <li>
+                        <input type="text" />
+                    </li>
+                </ul>
+                <button class="add">Add</button>
+                <button class="remove">Remove</button>
+            </div>
+
+            <div class="row">
+                <label>Map</label>
+                <input type="checkbox" class="toggle" name="map-toggle" />
+                <ul id="map" class="pairs">
+                    <li>
+                        <input type="text" />: <input type="text" />
+                    </li>
+                </ul>
+                <button class="add">Add</button>
+                <button class="remove">Remove</button>
+            </div>
+
+            <div class="row">
+                <label for="shim">Shim</label>
+                <input type="checkbox" class="toggle" name="shim-toggle" />
+                <ul>
+                    <li>
+                        <label>deps: </label>
+                        <input type="checkbox" name="deps-toggle" />
+                        <ul id="deps">
+                            <li>
+                                <input type="text" />
+                            </li>
+                        </ul>
+                        <button class="add">Add</button>
+                        <button class="remove">Remove</button>
+                    </li>
+                    <li>
+                        <label>exports: </label>
+                        <input type="checkbox" name="exports-toggle" disabled />
+                        <input type="text" name="exports" />
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row">
+                <label for="buildconfig">BuildConfig</label>
+                <input type="checkbox" class="toggle" name="buildconfig-toggle" />
+                <ul id="buildConfig">
+                    <li>
+                        <label for="minify">Minify</label>
+                        <input type="checkbox" name="minify">
+                    </li>
+                    <li>
+                        <label for="transpile">Transpile</label>
+                        <input type="checkbox" name="transpile">
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="col">
+        <h3>JSON</h3>
+        <textarea id="output"></textarea>
     </div>
 
-    <div class="row">
-        <label for="buildconfig">BuildConfig</label>
-        <input type="checkbox" class="toggle" name="buildconfig-toggle" />
-        <ul id="buildConfig">
-            <li>
-                <label for="uglify">Uglify</label>
-                <input type="checkbox" name="uglify">
-            </li>
-            <li>
-                <label for="traceur">Traceur</label>
-                <input type="checkbox" name="traceur">
-            </li>
-        </ul>
-    </div>
+</div>
 
-    <div class="row">
-        <button id="generate">Generate</button>
-    </div>
 
-</form>
 
-<textarea id="output"></textarea>
 
 <script>
     $(function() {

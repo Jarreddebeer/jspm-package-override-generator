@@ -1,0 +1,60 @@
+* {
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+input {
+    margin: 10px 0;
+}
+label {
+    width: 150px;
+    display: inline-block;
+    margin: 10px 0;
+}
+button, .row ul {
+    display: none;
+}
+.sub {
+    display: none;
+    width: 100%;
+    overflow: hidden;
+}
+.sub label {
+    margin-left: 50px;
+}
+.visible .sub, ul.visible, .visible ~ button {
+    display: block;
+}
+#generate {
+    display: block;
+}
+textarea {
+    width: 100%;
+    height: 500px;
+    border: 0;
+}
+
+/* LAYOUT */
+
+.row {
+    width: 100%;
+    display: block;
+    overflow: hidden;
+}
+.row.container {
+    padding: 10px;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.col {
+    float: left;
+    width: 49.5%;
+}
