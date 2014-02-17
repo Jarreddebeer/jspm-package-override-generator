@@ -37,7 +37,6 @@ var package_view = Backbone.View.extend({
 
 var override_model = Backbone.Model.extend({
     defaults: {
-        /*
         main: null,
         browser: null,
         registry: null,
@@ -49,7 +48,6 @@ var override_model = Backbone.Model.extend({
         map: null,
         shim: null,
         buildConfig: null
-        */
     }
 });
 
@@ -57,29 +55,35 @@ var override_view = Backbone.View.extend({
     el: '#override',
 
     events: {
-        'keyup input[type="text"]': 'activateEntry',
+        'keyup input[type="text"]': 'entryKeyup',
         'change input[type="checkbox"]': 'toggleSubList',
         'change input[type="text"]': 'plainTextChange',
 
-        'change input[name="main"]': 'setModelField',
-        'change input[name="browser"]': 'setModelField',
-        'change select[name="registry"]': 'setModelField',
-        'change input[name="dependencies"]': 'setModelField',
+        'keyup input[name="main"]': 'setModelField',
+        'keyup input[name="browser"]': 'setModelField',
+        'change input[type="radio"]': 'setModelField',
+        'keyup input[name="dependencies"]': 'setModelField',
 
         'change select[name="format"]': 'setModelField',
-        'change input[name="lib"]': 'parseDirectories',
-        'change input[name="dist"]': 'parseDirectories',
-        'change input[name="deps"]': 'parseShim',
-        'change input[name="exports"]': 'parseShim',
-        'change input[name="minify"]': 'parseBuildConfig',
-        'change input[name="transpile"]': 'parseBuildConfig',
+        'keyup input[name="lib"]': 'parseDirectories',
+        'keyup input[name="dist"]': 'parseDirectories',
+        'keyup input[name="deps"]': 'parseShim',
+        'keyup input[name="exports"]': 'parseShim',
+        'keyup input[name="minify"]': 'parseBuildConfig',
+        'keyup input[name="transpile"]': 'parseBuildConfig',
 
         'click button.add': 'addLi',
-        'click button.remove': 'removeLi'
+        'click button.remove': 'removeLi',
     },
 
     initialize: function() {
         this.model.on('change', this.generateOverride, this);
+    },
+
+    entryKeyup: function(e) {
+        this.activateEntry(e);
+        this.plainTextChange(e);
+        this.generateOverride();
     },
 
     activateEntry: function(e) {
@@ -111,6 +115,9 @@ var override_view = Backbone.View.extend({
                 case 'ignore':
                     this.parseIgnore();
                     break;
+                case 'dependencies':
+                    this.parseDependencies();
+                    break;
                 case 'deps':
                     this.parseShim();
                     break;
@@ -135,6 +142,18 @@ var override_view = Backbone.View.extend({
             d = null;
         }
         this.model.set('directories', d);
+    },
+
+    parseDependencies: function() {
+        console.log('parsing dependencies');
+        var hash = {};
+        this.$('#dependencies').children().each(function(i, li) {
+            var inputs = $(li).find('input');
+            if (inputs[0].value.length > 0 && inputs[1].value.length > 0) {
+                hash[inputs[0].value] = inputs[1].value;
+            }
+        });
+        this.model.set('dependencies', hash);
     },
 
     parseFiles: function() {
@@ -272,17 +291,22 @@ var override_view = Backbone.View.extend({
     },
 
     generateOverride: function() {
-        var package_data  = JSON.stringify( pm.toJSON(), null, 2);
-        var override_data = JSON.stringify( om.toJSON(), null, 2);
-        $('#output').val(override_data);
+        json = this.model.toJSON();
+        out_obj = {};
+        _.each(Object.keys(json), function(key) {
+            if (typeof json[key] != undefined && json[key] != null && json[key] != '') {
+                out_obj[key] = json[key];
+            }
+        });
+        var out;
+        if (Object.keys(out_obj).length > 0) {
+            out = JSON.stringify(out_obj, null, 2);
+        } else {
+            out = '';
+        }
+        $('#output').val(out);
     }
 
-    /*
-    render: function() {
-        this.$el.html();
-        return this;
-    }
-    */
 });
 
 var pm = new package_model();

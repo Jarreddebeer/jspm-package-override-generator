@@ -33,43 +33,55 @@
     <div class="col">
 
         <div id="override">
-            <h3>Override Details</h3>
+            <h3>Where is the package located?</h3>
 
             <div class="row">
-                    <label>Main</label>
-                    <input type="checkbox" name="main-toggle" disabled />
-                    <input type="text" id="main" name="main" />
+                <label>&nbsp;</label>
+                <input type="radio" id="registry-github" name="registry" value="jspm" /><label for="registry-github">Github</label>
+                <input type="radio" id="registry-npm" name="registry" value="npm" /><label for="registry-npm">npm</label>
             </div>
 
             <div class="row">
-                    <label>Browser</label>
-                    <input type="checkbox" name="browser-toggle" disabled />
-                    <input type="text" id="browser" name="browser" />
+                <label>Main</label>
+                <input type="checkbox" name="main-toggle" disabled />
+                <input type="text" id="main" name="main" />
             </div>
 
             <div class="row">
-                    <label>Registry</label>
-                    <select id="registry" name="registry">
-                        <option value="npm">npm</option>
-                        <option value="jspm">jspm</option>
-                    </select>
+                <label>Browser</label>
+                <input type="checkbox" name="browser-toggle" disabled />
+                <input type="text" id="browser" name="browser" />
             </div>
 
             <div class="row">
-                    <label>Dependencies</label>
-                    <input type="checkbox" name="dependencies-toggle" disabled />
-                    <input type="text" id="dependencies" name="dependencies" />
+                <label>Registry</label>
+                <select id="registry" name="registry">
+                    <option value="npm">npm</option>
+                    <option value="jspm">jspm</option>
+                </select>
             </div>
 
             <div class="row">
-                    <label>Format</label>
-                    <select id="format" name="format">
-                        <option value="">Please select</option>
-                        <option value="global">global</option>
-                        <option value="amd">amd</option>
-                        <option value="cjs">cjs</option>
-                        <option value="es6">es6</option>
-                    </select>
+                <label>Dependencies</label>
+                <input type="checkbox" class="toggle" name="dependencies-toggle" />
+                <ul id="dependencies" class="pairs">
+                    <li>
+                        <input type="text" />: <input type="text" />
+                    </li>
+                </ul>
+                <button class="add">Add</button>
+                <button class="remove">Remove</button>
+            </div>
+
+            <div class="row">
+                <label>Format</label>
+                <select id="format" name="format">
+                    <option value="">Please select</option>
+                    <option value="global">global</option>
+                    <option value="amd">amd</option>
+                    <option value="cjs">cjs</option>
+                    <option value="es6">es6</option>
+                </select>
             </div>
 
             <div class="row">
@@ -124,6 +136,8 @@
                 <button class="add">Add</button>
                 <button class="remove">Remove</button>
             </div>
+
+            <h3>Does this package contain global files which need to be shimmed?</h3>
 
             <div class="row">
                 <label for="shim">Shim</label>

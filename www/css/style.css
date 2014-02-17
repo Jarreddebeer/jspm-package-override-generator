@@ -15,6 +15,10 @@ label {
     display: inline-block;
     margin: 10px 0;
 }
+input[type="radio"] + label {
+    width: auto;
+    margin: 0 10px;
+}
 button, .row ul {
     display: none;
 }
