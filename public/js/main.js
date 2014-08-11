@@ -1,16 +1,81 @@
-$(function() {
 
-var package_model = Backbone.Model.extend({
-    defaults: {
-        folder: null,
-        filename: null,
-        version: null
-    }
-});
+// Package details
 
-var package_view = Backbone.View.extend({
+var registry = $('input[name="registry"]')
+  , textInputs = $('input[type="text"]')
+  , main = $('#main');
+
+// helpers
+
+/**
+ * $elements with 'name' attributes are not generated dynamically and considered 'Stable'
+ * @param (DOM) $el
+ * @return (boolean)
+ **/
+function isStable($el) {
+    return typeof $el.attr('name') != 'undefined';
+}
+
+/**
+ * Find the name of the Stable field from which
+ * the (dynamically generated) Unstable field is associated
+ * @param (DOM) Unstable field $element
+ * @return (String) name attribute
+ **/
+function getName($el) {
+    return $el.closest('.row').find('input[type="checkbox"]').attr('name').split('-')[0];
+}
+
+/**
+ * Toggle the check field to indicate whether a named field
+ * is being used, based on its value, in the package override.
+ * @param (DOM) changed $element
+ **/
+function activateField($el) {
+    active = $el.val().length > 0;
+    $el.prev().prop('checked', active);
+}
+
+// global variables
+
+var files = [];
+
+// private
+
+/**
+ * Get the names of files from the dynamic 'files' fields
+ **/
+function getFiles() {
+    files = [];
+    $('#files').children().each(function(i, li) {
+        var v = $(li).children(0).val();
+        if (v) files.push(v);
+    });
+}
+
+var parse = {
+    'files': getFiles
+}
+
+// public
+
+function parseTextField() {
+    var $el = $(this);
+    if (isStable($el)) activateField($el);
+    else parse[getName($el)]();
+}
+
+textInputs.on('keyup', parseTextField);
+
+
+
+
+/*
+
+
+
+
     el: '#package',
-
     events: {
         'change input[name="github"]': 'setLocations',
         'change input[name="version"]': 'setVersion'
@@ -29,11 +94,7 @@ var package_view = Backbone.View.extend({
             this.$('input[name="github"]').attr('placeholder', 'I think the URL was invalid.');
         }
     },
-
-    setVersion: function(e) {
-
-    }
-});
+    setVersion: function(e) { }
 
 var override_model = Backbone.Model.extend({
     defaults: {
@@ -52,18 +113,19 @@ var override_model = Backbone.Model.extend({
 });
 
 var override_view = Backbone.View.extend({
+
     el: '#override',
 
     events: {
         'keyup input[type="text"]': 'entryKeyup',
         'change input[type="checkbox"]': 'toggleSubList',
         'change input[type="text"]': 'plainTextChange',
-
+        //
         'keyup input[name="main"]': 'setModelField',
         'keyup input[name="browser"]': 'setModelField',
         'change input[type="radio"]': 'setModelField',
         'keyup input[name="dependencies"]': 'setModelField',
-
+        //
         'change select[name="format"]': 'setModelField',
         'keyup input[name="lib"]': 'parseDirectories',
         'keyup input[name="dist"]': 'parseDirectories',
@@ -71,7 +133,7 @@ var override_view = Backbone.View.extend({
         'keyup input[name="exports"]': 'parseShim',
         'keyup input[name="minify"]': 'parseBuildConfig',
         'keyup input[name="transpile"]': 'parseBuildConfig',
-
+        //
         'click button.add': 'addLi',
         'click button.remove': 'removeLi',
     },
@@ -309,10 +371,9 @@ var override_view = Backbone.View.extend({
 
 });
 
-var pm = new package_model();
-var pv = new package_view({ model: pm });
+var pm = new package_model()
+  , pv = new package_view({model: pm});
+  , om = new override_model();
+  , ov = new override_view({model: om});
 
-var om = new override_model();
-var ov = new override_view({ model: om });
-
-});
+*/
