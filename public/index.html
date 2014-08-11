@@ -2,14 +2,8 @@
 <html lang="en">
 
 <head>
-
+    <title>JSPM Package Override Generator</title>
     <link rel="stylesheet" href="/css/style.css">
-
-    <script src="jspm_packages/npm/underscore@1.5.2/underscore.js"></script>
-    <script src="jspm_packages/github/components/jquery@2.0.3/jquery.js"></script>
-    <script src="jspm_packages/npm/backbone@1.1.0/backbone.js"></script>
-    <script src="lib/main.js"></script>
-
 </head>
 
 <body>
@@ -186,18 +180,8 @@
 
 </div>
 
-
-
-
-<script>
-    $(function() {
-
-        $.get('/commits', function(data) {
-            console.log(data);
-        });
-
-    });
-</script>
+<script src="js/jquery.js"></script>
+<script src="js/main.js"></script>
 
 </body>
 </html>
