@@ -2,8 +2,12 @@
 // Package details
 
 var registry = $('input[name="registry"]')
-  , textInputs = $('input[type="text"]')
-  , main = $('#main');
+  , main = $('#main')
+  , rows = $('.row');
+
+// templates
+
+var dependencies_tpl = '<input type="text" />: <input type="text" /><button class="remove">Remove</button>';
 
 // helpers
 
@@ -26,19 +30,29 @@ function getName($el) {
     return $el.closest('.row').find('input[type="checkbox"]').attr('name').split('-')[0];
 }
 
-/**
- * Toggle the check field to indicate whether a named field
- * is being used, based on its value, in the package override.
- * @param (DOM) changed $element
- **/
-function activateField($el) {
-    active = $el.val().length > 0;
-    $el.prev().prop('checked', active);
+function setActivateField($el, v) {
+    var $chkbx = getActivateField($el);
+    $chkbx.prop('checked', v);
 }
+
+function getActivateField($el) {
+    return $el.closest('.row').find('> input[type="checkbox"].toggle');
+}
+
+/**
+ * Get the accompanying $ul list of Unstable fields
+ * @param (DOM) el
+ * @return ($DOM) $ul
+ **/
+function getUl(el) {
+    return $(el).closest('.row').find('> ul');
+}
+
 
 // global variables
 
 var files = [];
+var dependencies = {};
 
 // private
 
@@ -53,21 +67,75 @@ function getFiles() {
     });
 }
 
+/**
+ * Get the names and version numbers of dependencies
+ **/
+function getDependencies() {
+    dependencies = {};
+    $('#dependencies').children().each(function(i, li) {
+        var n = $(li).children().eq(0).val()
+          , v = $(li).children().eq(1).val();
+        dependencies[n] = v;
+    });
+}
+
 var parse = {
-    'files': getFiles
+    'files': getFiles,
+    'dependencies': getDependencies
 }
 
 // public
 
+/**
+ * Parse text fields, activating Stable fields if value is non-empty
+ * or run the appropriate method on Unstable fields.
+ **/
 function parseTextField() {
     var $el = $(this);
-    if (isStable($el)) activateField($el);
+    if (isStable($el)) {
+        var active = (($el.val().length > 0) ? true : false);
+        setActivateField($el, active);
+    }
     else parse[getName($el)]();
 }
 
-textInputs.on('keyup', parseTextField);
+/**
+ * Toggle the display of the Unstable fields related to the property
+ **/
+function toggleSubfields() {
+    $ul = getUl(this);
+    $ul.toggleClass('visible');
+}
 
+/**
+ * Add a row of Unstable fields to the $ul
+ **/
+function addFieldRow() {
+    $ul = getUl(this);
+    $ul.append('<li>' + dependencies_tpl + '</li>');
+    if (!$ul.children().length == 0) {
+        setActivateField($(this), true);
+        $ul.addClass('visible');
+    }
+}
 
+/**
+ * Remove a row of Unstable fields from the $ul
+ **/
+function remFieldRow() {
+    var btn = this
+      , $ul = getUl(btn);
+    $(btn).parent().remove();
+    if ($ul.children().length == 0) {
+        setActivateField($ul, false);
+        $ul.removeClass('visible');
+    }
+}
+
+rows.on('keyup', 'input[type="text"]', parseTextField);
+rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
+rows.on('click', 'button.add', addFieldRow);
+rows.on('click', 'button.remove', remFieldRow);
 
 
 /*

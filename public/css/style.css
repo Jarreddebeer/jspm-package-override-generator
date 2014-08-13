@@ -19,7 +19,7 @@ input[type="radio"] + label {
     width: auto;
     margin: 0 10px;
 }
-button, .row ul {
+.row ul {
     display: none;
 }
 .sub {

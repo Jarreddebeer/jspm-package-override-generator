@@ -38,26 +38,21 @@
 
             <div class="row">
                 <label>Main</label>
-                <input type="checkbox" name="main-toggle" disabled />
+                <input type="checkbox" class="toggle" name="main-toggle" disabled />
                 <input type="text" id="main" name="main" />
             </div>
 
             <div class="row">
                 <label>Browser</label>
-                <input type="checkbox" name="browser-toggle" disabled />
+                <input type="checkbox" class="toggle" name="browser-toggle" disabled />
                 <input type="text" id="browser" name="browser" />
             </div>
 
             <div class="row">
                 <label>Dependencies</label>
-                <input type="checkbox" class="toggle" name="dependencies-toggle" />
-                <ul id="dependencies" class="pairs">
-                    <li>
-                        <input type="text" />: <input type="text" />
-                    </li>
-                </ul>
+                <input type="checkbox" class="toggle" name="dependencies-toggle" disabled />
                 <button class="add">Add</button>
-                <button class="remove">Remove</button>
+                <ul id="dependencies" class="pairs"></ul>
             </div>
 
             <div class="row">
@@ -90,38 +85,38 @@
 
             <div class="row">
                 <label>files</label>
-                <input type="checkbox" class="toggle" name="files-toggle" />
+                <input type="checkbox" class="toggle" name="files-toggle" disabled />
+                <button class="add">Add</button>
                 <ul id="files">
                     <li>
                         <input type="text" />
+                        <button class="remove">Remove</button>
                     </li>
                 </ul>
-                <button class="add">Add</button>
-                <button class="remove">Remove</button>
             </div>
 
             <div class="row">
                 <label>ignore</label>
-                <input type="checkbox" class="toggle" name="ignore-toggle" />
+                <input type="checkbox" class="toggle" name="ignore-toggle" disabled />
+                <button class="add">Add</button>
                 <ul id="ignore">
                     <li>
                         <input type="text" />
+                        <button class="remove">Remove</button>
                     </li>
                 </ul>
-                <button class="add">Add</button>
-                <button class="remove">Remove</button>
             </div>
 
             <div class="row">
                 <label>Map</label>
-                <input type="checkbox" class="toggle" name="map-toggle" />
+                <input type="checkbox" class="toggle" name="map-toggle" disabled />
+                <button class="add">Add</button>
                 <ul id="map" class="pairs">
                     <li>
                         <input type="text" />: <input type="text" />
+                        <button class="remove">Remove</button>
                     </li>
                 </ul>
-                <button class="add">Add</button>
-                <button class="remove">Remove</button>
             </div>
 
             <h3>Does this package contain global files which need to be shimmed?</h3>
@@ -133,13 +128,13 @@
                     <li>
                         <label>deps: </label>
                         <input type="checkbox" name="deps-toggle" />
+                        <button class="add">Add</button>
                         <ul id="deps">
                             <li>
                                 <input type="text" />
+                                <button class="remove">Remove</button>
                             </li>
                         </ul>
-                        <button class="add">Add</button>
-                        <button class="remove">Remove</button>
                     </li>
                     <li>
                         <label>exports: </label>
