@@ -87,54 +87,34 @@
                 <label>files</label>
                 <input type="checkbox" class="toggle" name="files-toggle" disabled />
                 <button class="add">Add</button>
-                <ul id="files">
-                    <li>
-                        <input type="text" />
-                        <button class="remove">Remove</button>
-                    </li>
-                </ul>
+                <ul id="files"></ul>
             </div>
 
             <div class="row">
                 <label>ignore</label>
                 <input type="checkbox" class="toggle" name="ignore-toggle" disabled />
                 <button class="add">Add</button>
-                <ul id="ignore">
-                    <li>
-                        <input type="text" />
-                        <button class="remove">Remove</button>
-                    </li>
-                </ul>
+                <ul id="ignore"></ul>
             </div>
 
             <div class="row">
                 <label>Map</label>
                 <input type="checkbox" class="toggle" name="map-toggle" disabled />
                 <button class="add">Add</button>
-                <ul id="map" class="pairs">
-                    <li>
-                        <input type="text" />: <input type="text" />
-                        <button class="remove">Remove</button>
-                    </li>
-                </ul>
+                <ul id="map" class="pairs"></ul>
             </div>
 
             <h3>Does this package contain global files which need to be shimmed?</h3>
 
-            <div class="row">
+            <div class="row" data-ul-level="2">
                 <label for="shim">Shim</label>
                 <input type="checkbox" class="toggle" name="shim-toggle" />
                 <ul>
                     <li>
                         <label>deps: </label>
-                        <input type="checkbox" name="deps-toggle" />
+                        <input type="checkbox" class="toggle" name="deps-toggle" />
                         <button class="add">Add</button>
-                        <ul id="deps">
-                            <li>
-                                <input type="text" />
-                                <button class="remove">Remove</button>
-                            </li>
-                        </ul>
+                        <ul id="deps"></ul>
                     </li>
                     <li>
                         <label>exports: </label>

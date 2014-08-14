@@ -7,7 +7,16 @@ var registry = $('input[name="registry"]')
 
 // templates
 
-var dependencies_tpl = '<input type="text" />: <input type="text" /><button class="remove">Remove</button>';
+function getTemplate(name) {
+    var templates = {
+        'map':          '<input type="text" />: <input type="text" /><button class="remove">Remove</button>',
+        'deps':         '<input type="text" /><button class="remove">Remove</button>',
+        'files':        '<input type="text" /><button class="remove">Remove</button>',
+        'ignore':       '<input type="text" /><button class="remove">Remove</button>',
+        'dependencies': '<input type="text" />: <input type="text" /><button class="remove">Remove</button>'
+    }
+    return '<li>' + templates[name] + '</li>';
+}
 
 // helpers
 
@@ -36,7 +45,7 @@ function setActivateField($el, v) {
 }
 
 function getActivateField($el) {
-    return $el.closest('.row').find('> input[type="checkbox"].toggle');
+    return $el.parent().find('> input[type="checkbox"].toggle');
 }
 
 /**
@@ -44,10 +53,12 @@ function getActivateField($el) {
  * @param (DOM) el
  * @return ($DOM) $ul
  **/
-function getUl(el) {
-    return $(el).closest('.row').find('> ul');
+function getUl(el, level) {
+    var $row = $(el).closest('.row')
+      , nest_level = arguments[1] || $row.data('ul-level');
+    if (nest_level == 2) return $row.find('> ul ul');
+    return $row.find('> ul');
 }
-
 
 // global variables
 
@@ -90,7 +101,8 @@ var parse = {
  * Parse text fields, activating Stable fields if value is non-empty
  * or run the appropriate method on Unstable fields.
  **/
-function parseTextField() {
+function parseTextField(e) {
+    e.stopPropagation();
     var $el = $(this);
     if (isStable($el)) {
         var active = (($el.val().length > 0) ? true : false);
@@ -102,17 +114,20 @@ function parseTextField() {
 /**
  * Toggle the display of the Unstable fields related to the property
  **/
-function toggleSubfields() {
-    $ul = getUl(this);
+function toggleSubfields(e) {
+    e.stopPropagation();
+    $ul = getUl(this, 1);
     $ul.toggleClass('visible');
 }
 
 /**
  * Add a row of Unstable fields to the $ul
  **/
-function addFieldRow() {
-    $ul = getUl(this);
-    $ul.append('<li>' + dependencies_tpl + '</li>');
+function addFieldRow(e) {
+    e.stopPropagation();
+    var $ul = getUl(this)
+      , id  = $ul.attr('id');
+    $ul.append(getTemplate(id));
     if (!$ul.children().length == 0) {
         setActivateField($(this), true);
         $ul.addClass('visible');
