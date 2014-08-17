@@ -3,7 +3,10 @@
 
 var registry = $('input[name="registry"]')
   , main = $('#main')
-  , rows = $('.row');
+  , rows = $('.row')
+
+  , $minify = $('#minify')
+  , $transpile = $('#transpile');
 
 // templates
 
@@ -62,37 +65,57 @@ function getUl(el, level) {
 
 // global variables
 
-var files = [];
 var dependencies = {};
+var files = [];
+var ignore = [];
+var map = {};
+var deps = [];
 
 // private
 
 /**
  * Get the names of files from the dynamic 'files' fields
+ * @param (DOM) $ul element
  **/
-function getFiles() {
-    files = [];
-    $('#files').children().each(function(i, li) {
+function getArrayList($ul) {
+    var ary = [];
+    $ul.children().each(function(i, li) {
         var v = $(li).children(0).val();
-        if (v) files.push(v);
+        if (v) ary.push(v);
     });
+    return ary;
 }
 
 /**
  * Get the names and version numbers of dependencies
+ * @param (DOM) $ul element
  **/
-function getDependencies() {
-    dependencies = {};
-    $('#dependencies').children().each(function(i, li) {
+function getObjectList($ul) {
+    obj = {};
+    $ul.children().each(function(i, li) {
         var n = $(li).children().eq(0).val()
           , v = $(li).children().eq(1).val();
-        dependencies[n] = v;
+        obj[n] = v;
     });
+    return obj;
 }
 
 var parse = {
-    'files': getFiles,
-    'dependencies': getDependencies
+    'files': function() {
+        files = getArrayList($('#files'));
+    },
+    'dependencies': function() {
+        dependencies = getObjectList($('#dependencies'));
+    },
+    'ignore': function() {
+        ignore = getArrayList($('#ignore'));
+    },
+    'map': function() {
+        map = getObjectList($('#map'));
+    },
+    'deps': function() {
+        deps = getArrayList($('#deps'));
+    }
 }
 
 // public
@@ -109,6 +132,7 @@ function parseTextField(e) {
         setActivateField($el, active);
     }
     else parse[getName($el)]();
+    document.dispatchEvent(renderEvent);
 }
 
 /**
@@ -146,6 +170,41 @@ function remFieldRow() {
         $ul.removeClass('visible');
     }
 }
+
+function renderOverride() {
+
+    o = {};
+
+    o.main = main.val();
+    o.browser = $('input[name="browser"]').val();
+    o.dependencies = dependencies;
+    o.format = $('#format').val()
+
+    o.directories = {}
+    o.directories.lib = $('input[name="lib"]').val();
+    o.directories.dist = $('input[name="dist"]').val();
+
+    o.files = files;
+    o.ignore = ignore;
+    o.map = map;
+
+    o.shim = {};
+    o.shim.deps = deps;
+    o.shim.exports = $('#exports').val();
+
+    o.buildConfig = {};
+    if ($minify.is(':checked'))
+        o.buildConfig.minify = true;
+    if ($transpile.is(':checked'))
+        o.buildConfig.transpile = true;
+
+    var out = JSON.stringify(o, null, 2);
+    $('#output').val(out);
+
+}
+
+var renderEvent = new CustomEvent('render-override');
+document.addEventListener('render-override', renderOverride);
 
 rows.on('keyup', 'input[type="text"]', parseTextField);
 rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);

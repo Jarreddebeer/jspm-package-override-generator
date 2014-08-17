@@ -110,16 +110,16 @@
                 <label for="shim">Shim</label>
                 <input type="checkbox" class="toggle" name="shim-toggle" />
                 <ul>
-                    <li>
+                    <li class="row">
                         <label>deps: </label>
                         <input type="checkbox" class="toggle" name="deps-toggle" />
                         <button class="add">Add</button>
                         <ul id="deps"></ul>
                     </li>
-                    <li>
+                    <li class="row">
                         <label>exports: </label>
-                        <input type="checkbox" name="exports-toggle" disabled />
-                        <input type="text" name="exports" />
+                        <input type="checkbox" class="toggle" name="exports-toggle" disabled />
+                        <input type="text" id="exports" name="exports" />
                     </li>
                 </ul>
             </div>
@@ -130,11 +130,11 @@
                 <ul id="buildConfig">
                     <li>
                         <label for="minify">Minify</label>
-                        <input type="checkbox" name="minify">
+                        <input type="checkbox" id="minify" name="minify">
                     </li>
                     <li>
                         <label for="transpile">Transpile</label>
-                        <input type="checkbox" name="transpile">
+                        <input type="checkbox" id="transpile" name="transpile">
                     </li>
                 </ul>
             </div>
