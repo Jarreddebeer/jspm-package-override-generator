@@ -2,11 +2,33 @@
 // Package details
 
 var registry = $('input[name="registry"]')
-  , main = $('#main')
-  , rows = $('.row')
+  , $main = $('#main')
+  , $rows = $('.row')
 
+  , $browser = $('input[name="browser"]')
+  , $format = $('#format')
+  , $lib = $('input[name="lib"]')
+  , $dist = $('input[name="dist"]')
+  , $exports = $('#exports')
   , $minify = $('#minify')
-  , $transpile = $('#transpile');
+  , $transpile = $('#transpile')
+
+  , $main_tgl = $('input[name="main-toggle"]')
+  , $browser_tgl = $('input[name="browser-toggle"]')
+  , $dependencies_tgl = $('input[name="dependencies-toggle"]')
+  , $lib_tgl = $('input[name="lib-toggle"]')
+  , $dist_tgl = $('input[name="dist-toggle"]')
+  , $format_tgl = $('input[name="format-toggle"]')
+  , $directories_tgl = $('input[name="directories-toggle"]')
+  , $files_tgl = $('input[name="files-toggle"]')
+  , $ignore_tpl = $('input[name="ignore-toggle"]')
+  , $map_tgl = $('input[name="map-toggle"]')
+  , $shim_tgl = $('input[name="shim-toggle"]')
+  , $deps_tgl = $('input[name="deps-toggle"]')
+  , $exports_tgl = $('input[name="exports-toggle"]')
+  , $buildConfig_tgl = $('input[name="buildconfig-toggle"]')
+
+  , $output = $('#output');
 
 // templates
 
@@ -42,12 +64,12 @@ function getName($el) {
     return $el.closest('.row').find('input[type="checkbox"]').attr('name').split('-')[0];
 }
 
-function setActivateField($el, v) {
-    var $chkbx = getActivateField($el);
+function setToggleField($el, v) {
+    var $chkbx = getToggleField($el);
     $chkbx.prop('checked', v);
 }
 
-function getActivateField($el) {
+function getToggleField($el) {
     return $el.parent().find('> input[type="checkbox"].toggle');
 }
 
@@ -95,7 +117,8 @@ function getObjectList($ul) {
     $ul.children().each(function(i, li) {
         var n = $(li).children().eq(0).val()
           , v = $(li).children().eq(1).val();
-        obj[n] = v;
+        if (n && v)
+            obj[n] = v;
     });
     return obj;
 }
@@ -124,12 +147,17 @@ var parse = {
  * Parse text fields, activating Stable fields if value is non-empty
  * or run the appropriate method on Unstable fields.
  **/
-function parseTextField(e) {
+function parseField(e) {
     e.stopPropagation();
     var $el = $(this);
     if (isStable($el)) {
-        var active = (($el.val().length > 0) ? true : false);
-        setActivateField($el, active);
+        var active;
+        if ($el.is('input'))
+            active = $el.val().length > 0;
+        else if ($el.is('select'))
+            active = $el.val() != '';
+        else { /* TODO: throw error */ }
+        setToggleField($el, active);
     }
     else parse[getName($el)]();
     document.dispatchEvent(renderEvent);
@@ -153,7 +181,7 @@ function addFieldRow(e) {
       , id  = $ul.attr('id');
     $ul.append(getTemplate(id));
     if (!$ul.children().length == 0) {
-        setActivateField($(this), true);
+        setToggleField($(this), true);
         $ul.addClass('visible');
     }
 }
@@ -166,50 +194,104 @@ function remFieldRow() {
       , $ul = getUl(btn);
     $(btn).parent().remove();
     if ($ul.children().length == 0) {
-        setActivateField($ul, false);
+        setToggleField($ul, false);
         $ul.removeClass('visible');
+        cleanField($ul);
+    } else {
+        parse[getName($ul)]();
     }
+}
+
+/**
+ * Empties the associated variable
+ **/
+function cleanField($ul) {
+    var name = getName($ul);
+    // TODO: abstract this
+    if (name == 'dependencies')
+        dependencies = {};
+    else if (name == 'files')
+        files = [];
+    else if (name == 'map')
+        map = {};
+    else if (name == 'deps')
+        deps = [];
+}
+
+function isChecked($el) {
+    return $el.is(':checked');
 }
 
 function renderOverride() {
 
     o = {};
 
-    o.main = main.val();
-    o.browser = $('input[name="browser"]').val();
-    o.dependencies = dependencies;
-    o.format = $('#format').val()
+    if (isChecked($main_tgl))
+        o.main = $main.val();
+    if (isChecked($browser_tgl))
+        o.browser = $browser.val();
+    if (isChecked($dependencies_tgl) && !$.isEmptyObject(dependencies))
+        o.dependencies = dependencies;
+    if (isChecked($format_tgl))
+        o.format = $format.val();
 
-    o.directories = {}
-    o.directories.lib = $('input[name="lib"]').val();
-    o.directories.dist = $('input[name="dist"]').val();
+    if (isChecked($directories_tgl)) {
+        if (isChecked($lib_tgl) || isChecked($dist_tgl)) {
+            o.directories = {}
+            if (isChecked($lib_tgl))
+                o.directories.lib = $lib.val();
+            if (isChecked($dist_tgl))
+                o.directories.dist = $dist.val();
+        }
+    }
 
-    o.files = files;
-    o.ignore = ignore;
-    o.map = map;
+    if (isChecked($files_tgl) && files.length > 0)
+        o.files = files;
+    if (isChecked($ignore_tpl) && ignore.length > 0)
+        o.ignore = ignore;
+    if (isChecked($map_tgl) && !$.isEmptyObject(map))
+        o.map = map;
 
-    o.shim = {};
-    o.shim.deps = deps;
-    o.shim.exports = $('#exports').val();
+    if (isChecked($shim_tgl)) {
+        if (isChecked($deps_tgl) && deps.length > 0 || isChecked($exports_tgl)) {
+            o.shim = {};
+            if (isChecked($deps_tgl) && deps.length > 0)
+                o.shim.deps = deps;
+            if (isChecked($exports_tgl))
+                o.shim.exports = $exports.val();
+        }
+    }
 
-    o.buildConfig = {};
-    if ($minify.is(':checked'))
-        o.buildConfig.minify = true;
-    if ($transpile.is(':checked'))
-        o.buildConfig.transpile = true;
+    if (isChecked($buildConfig_tgl)) {
+        if (isChecked($minify) || isChecked($transpile)) {
+            o.buildConfig = {};
+            if (isChecked($minify))
+                o.buildConfig.minify = true;
+            if (isChecked($transpile))
+                o.buildConfig.transpile = true;
+        }
+    }
 
-    var out = JSON.stringify(o, null, 2);
-    $('#output').val(out);
+    if (!$.isEmptyObject(o)) {
+        var out = JSON.stringify(o, null, 2);
+        $output.val(out);
+    } else {
+        $output.val('');
+    }
 
 }
 
 var renderEvent = new CustomEvent('render-override');
 document.addEventListener('render-override', renderOverride);
 
-rows.on('keyup', 'input[type="text"]', parseTextField);
-rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
-rows.on('click', 'button.add', addFieldRow);
-rows.on('click', 'button.remove', remFieldRow);
+$rows.on('keyup', 'input[type="text"]', parseField);
+$rows.on('change', 'select', parseField)
+$rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
+$rows.on('change', 'input[type="checkbox"]', function() { document.dispatchEvent(renderEvent) });
+$rows.on('click', 'button.add', addFieldRow);
+$rows.on('click', 'button.add', function() { document.dispatchEvent(renderEvent) });
+$rows.on('click', 'button.remove', remFieldRow);
+$rows.on('click', 'button.remove', function() { document.dispatchEvent(renderEvent) });
 
 
 /*

@@ -1,6 +1,6 @@
 {
   "name": "package-override-generator",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Add package overrides to jspm registry",
   "main": "index.js",
   "repository": {
