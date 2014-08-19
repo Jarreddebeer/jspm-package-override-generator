@@ -15,16 +15,19 @@
 
         <div class="row">
             <label>Registry</label>
-            <input type="radio" id="registry-github" name="registry" value="jspm" /><label for="registry-github">Github</label>
-            <input type="radio" id="registry-npm" name="registry" value="npm" /><label for="registry-npm">npm</label>
+            <input type="checkbox" class="toggle" name="registry-toggle" disabled />
+            <input type="radio" id="registry-github" name="registry" value="jspm" disabled /><label for="registry-github">Github</label>
+            <input type="radio" id="registry-npm" name="registry" value="npm" disabled /><label for="registry-npm">npm</label>
         </div>
 
         <div class="row">
             <label>URL</label>
+            <input type="checkbox" class="toggle" name="url-toggle" disabled />
             <input type="text" name="url" placeholder="Enter url to source" />
         </div>
         <div class="row">
             <label>Version</label>
+            <input type="checkbox" class="toggle" name="version-toggle" disabled />
             <input type="text" name="version" placeholder="Version number from tags in repo" />
         </div>
     </div>
@@ -143,8 +146,12 @@
         </div>
     </div>
     <div class="col">
-        <h3>JSON</h3>
-        <textarea id="output"></textarea>
+        <h3>Entry to go into registry.json of jspm registry</h3>
+        <textarea id="registry-output" disabled></textarea>
+        <h3>Path for override file in jspm registry</h3>
+        <input id="directory-output" disabled />
+        <h3>Contents of override file</h3>
+        <textarea id="override-output" disabled></textarea>
     </div>
 
 </div>

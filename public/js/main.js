@@ -1,7 +1,9 @@
 
 // Package details
 
-var registry = $('input[name="registry"]')
+var $registry = $('input[name="registry"]')
+  , $url = $('input[name="url"]')
+  , $version = $('input[name="version"]')
   , $main = $('#main')
   , $rows = $('.row')
 
@@ -28,7 +30,9 @@ var registry = $('input[name="registry"]')
   , $exports_tgl = $('input[name="exports-toggle"]')
   , $buildConfig_tgl = $('input[name="buildconfig-toggle"]')
 
-  , $output = $('#output');
+  , $registry_out = $('#registry-output')
+  , $directory_out = $('#directory-output')
+  , $override_out = $('#override-output');
 
 // templates
 
@@ -160,7 +164,6 @@ function parseField(e) {
         setToggleField($el, active);
     }
     else parse[getName($el)]();
-    document.dispatchEvent(renderEvent);
 }
 
 /**
@@ -222,8 +225,27 @@ function isChecked($el) {
     return $el.is(':checked');
 }
 
-function renderOverride() {
+function render() {
+    var $el = $(this)
+      , name = getName($el);
+    switch (name) {
+        case 'registry':
+            renderDirectory();
+            break;
+        case 'url':
+            setRegistry();
+            renderDirectory();
+            break;
+        case 'version':
+            renderDirectory();
+            break;
+        default:
+            renderOverride();
+            break;
+    }
+}
 
+function renderOverride() {
     o = {};
 
     if (isChecked($main_tgl))
@@ -274,24 +296,66 @@ function renderOverride() {
 
     if (!$.isEmptyObject(o)) {
         var out = JSON.stringify(o, null, 2);
-        $output.val(out);
+        $override_out.val(out);
     } else {
-        $output.val('');
+        $override_out.val('');
     }
 
 }
 
-var renderEvent = new CustomEvent('render-override');
-document.addEventListener('render-override', renderOverride);
+function renderRegistry() {
+    $registry_out.val($registry.val());
+}
+
+function renderDirectory() {
+    var reg = $registry.val()
+      , url = $url.val()
+      , ver = $version.val()
+      , out = 'jspm/registry/' + reg + '/';
+
+    switch (reg) {
+        case 'github':
+            var dir = url.split('.')[1].split('/')[1]  // https://github.com/dir/repo -> dir
+              , repo = url.split('.')[1].split('/')[2] // https://github.com/dir/repo -> repo
+            out += dir + '/' + repo;
+            break;
+        case 'npm':
+            var repo = url.split('.')[2].split('/')[2] // https://www.npmjs.org/package/name -> name
+            out += repo;
+    }
+    out += '@' + ver + '.json';
+    $directory_out.val(out);
+}
+
+function setRegistry() {
+    var u = $url.val()
+      , reg;
+    if (u.indexOf('github') != -1) reg = 'github';
+    else if (u.indexOf('npm') != -1) reg = 'npm';
+    $registry.val(reg).prop('checked', true).trigger('change');
+
+}
+
+
+var renderOverrideEvent  = new CustomEvent('render-override');
+var renderRegistryEvent  = new CustomEvent('render-registry');
+var renderDirectoryEvent = new CustomEvent('render-directory');
+
+document.addEventListener('render-override' , renderOverride);
+document.addEventListener('render-registry' , renderRegistry);
+document.addEventListener('render-directory', renderDirectory);
 
 $rows.on('keyup', 'input[type="text"]', parseField);
-$rows.on('change', 'select', parseField)
+$rows.on('keyup', 'input[type="text"]', render);
+$rows.on('change', 'select', parseField);
+$rows.on('change', 'input[type="radio"]', parseField);
+
 $rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
-$rows.on('change', 'input[type="checkbox"]', function() { document.dispatchEvent(renderEvent) });
+$rows.on('change', 'input[type="checkbox"]', function() { document.dispatchEvent(renderOverrideEvent) });
 $rows.on('click', 'button.add', addFieldRow);
-$rows.on('click', 'button.add', function() { document.dispatchEvent(renderEvent) });
+$rows.on('click', 'button.add', function() { document.dispatchEvent(renderOverrideEvent) });
 $rows.on('click', 'button.remove', remFieldRow);
-$rows.on('click', 'button.remove', function() { document.dispatchEvent(renderEvent) });
+$rows.on('click', 'button.remove', function() { document.dispatchEvent(renderOverrideEvent) });
 
 
 /*
