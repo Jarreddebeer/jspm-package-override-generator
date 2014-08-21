@@ -230,13 +230,16 @@ function render() {
       , name = getName($el);
     switch (name) {
         case 'registry':
+            renderRegistry();
             renderDirectory();
             break;
         case 'url':
             setRegistry();
+            renderRegistry();
             renderDirectory();
             break;
         case 'version':
+            renderRegistry();
             renderDirectory();
             break;
         default:
@@ -304,7 +307,34 @@ function renderOverride() {
 }
 
 function renderRegistry() {
-    $registry_out.val($registry.val());
+    var registry = $registry.val()
+      , url = $url.val()
+      , out = '...\n';
+    switch (registry) {
+        case 'github':
+            out += 'github:' + getGithubUsername(url) + '/' + getGithubRepository(url);
+            break;
+        case 'npm':
+            out += 'npm:' + getNpmName(url);
+            break;
+    }
+    out += '\n...';
+    $registry_out.val(out);
+}
+//
+// https://github.com/dir/repo -> dir
+function getGithubUsername(url) {
+    return url.split('.')[1].split('/')[1];
+}
+
+// https://github.com/dir/repo -> repo
+function getGithubRepository(url) {
+    return url.split('.')[1].split('/')[2];
+}
+
+// https://www.npmjs.org/package/name -> name
+function getNpmName(url) {
+    return url.split('.')[2].split('/')[2];
 }
 
 function renderDirectory() {
@@ -315,12 +345,12 @@ function renderDirectory() {
 
     switch (reg) {
         case 'github':
-            var dir = url.split('.')[1].split('/')[1]  // https://github.com/dir/repo -> dir
-              , repo = url.split('.')[1].split('/')[2] // https://github.com/dir/repo -> repo
+            var dir = getGithubRepository(url)
+              , repo = getGithubRepository(url);
             out += dir + '/' + repo;
             break;
         case 'npm':
-            var repo = url.split('.')[2].split('/')[2] // https://www.npmjs.org/package/name -> name
+            var repo = getNpmName(url);
             out += repo;
     }
     out += '@' + ver + '.json';
