@@ -11,16 +11,56 @@ input {
     margin: 10px 0;
 }
 label {
-    width: 150px;
+    width: 25%;
     display: inline-block;
     margin: 10px 0;
+}
+input[type="text"] {
+    width: 68%;
 }
 input[type="radio"] + label {
     width: auto;
     margin: 0 10px;
 }
+input.toggle {
+    margin-right: 10px;
+}
+.row div.row {
+    margin-left: 0;
+    margin-right: 0;
+}
 .row ul {
     display: none;
+    list-style-type: none;
+    padding: 0;
+}
+.row ul.list input[type="text"] {
+    width: 54%;
+}
+.row ul.pairs input[type="text"] {
+    width: 25%;
+}
+.row ul.pairs span {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.row ul label {
+    margin-left: 20px;
+    margin-right: 10px;
+}
+.row ul input[name] {
+    margin-left: -30px;
+}
+.row ul input[name]:last-child {
+    width: 54%;
+    margin-left: 0px;
+}
+.row ul button {
+    margin-left: 10px;
+}
+.row ul li.row {
+    margin-left: 0;
+    margin-right: 0;
 }
 .sub {
     display: none;
@@ -38,8 +78,8 @@ input[type="radio"] + label {
 }
 textarea {
     width: 100%;
-    height: 500px;
     border: 0;
+    height: auto;
 }
 
 /* LAYOUT */
@@ -61,4 +101,10 @@ textarea {
 .col {
     float: left;
     width: 49.5%;
+}
+
+.fixed {
+    position: fixed;
+    top: 0;
+    overflow: scroll;
 }

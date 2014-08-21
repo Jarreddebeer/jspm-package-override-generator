@@ -3,110 +3,110 @@
 
 <head>
     <title>JSPM Package Override Generator</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 
 <body>
 
-<div class="row container">
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="input">
+            <div id="package">
+                <h3>Package Details</h3>
 
-    <div id="package">
-        <h3>Package Details</h3>
+                <div class="row">
+                    <label>Package Url</label>
+                    <input type="checkbox" class="toggle" name="url-toggle" disabled />
+                    <input type="text" name="url" placeholder="Enter url to source" />
+                </div>
 
-        <div class="row">
-            <label>Registry</label>
-            <input type="checkbox" class="toggle" name="registry-toggle" disabled />
-            <input type="radio" id="registry-github" name="registry" value="jspm" disabled /><label for="registry-github">Github</label>
-            <input type="radio" id="registry-npm" name="registry" value="npm" disabled /><label for="registry-npm">npm</label>
-        </div>
+                <div class="row">
+                    <label>Registry</label>
+                    <input type="checkbox" class="toggle" name="registry-toggle" disabled />
+                    <input type="radio" id="registry-github" name="registry" value="github" disabled /><label for="registry-github">Github</label>
+                    <input type="radio" id="registry-npm" name="registry" value="npm" disabled /><label for="registry-npm">npm</label>
+                </div>
 
-        <div class="row">
-            <label>URL</label>
-            <input type="checkbox" class="toggle" name="url-toggle" disabled />
-            <input type="text" name="url" placeholder="Enter url to source" />
-        </div>
-        <div class="row">
-            <label>Version</label>
-            <input type="checkbox" class="toggle" name="version-toggle" disabled />
-            <input type="text" name="version" placeholder="Version number from tags in repo" />
-        </div>
-    </div>
-
-</div>
-<div class="row container">
-    <div class="col">
-
-        <div id="override">
-            <h3>Override settings</h3>
-
-            <div class="row">
-                <label>Main</label>
-                <input type="checkbox" class="toggle" name="main-toggle" disabled />
-                <input type="text" id="main" name="main" />
+                <div class="row">
+                    <label>Version</label>
+                    <input type="checkbox" class="toggle" name="version-toggle" disabled />
+                    <input type="text" name="version" placeholder="Version number from tags in repo" />
+                </div>
             </div>
 
-            <div class="row">
-                <label>Browser</label>
-                <input type="checkbox" class="toggle" name="browser-toggle" disabled />
-                <input type="text" id="browser" name="browser" />
-            </div>
+            <div id="override">
+                <h3>Override settings</h3>
 
-            <div class="row">
-                <label>Dependencies</label>
-                <input type="checkbox" class="toggle" name="dependencies-toggle" disabled />
-                <button class="add">Add</button>
-                <ul id="dependencies" class="pairs"></ul>
-            </div>
+                <div class="row">
+                    <label>Main</label>
+                    <input type="checkbox" class="toggle" name="main-toggle" disabled />
+                    <input type="text" id="main" name="main" />
+                </div>
 
-            <div class="row">
-                <label>Format</label>
-                <input type="checkbox" class="toggle" name="format-toggle" disabled />
-                <select id="format" name="format">
-                    <option value="">Please select</option>
-                    <option value="global">global</option>
-                    <option value="amd">amd</option>
-                    <option value="cjs">cjs</option>
-                    <option value="es6">es6</option>
-                </select>
-            </div>
+                <div class="row">
+                    <label>Browser</label>
+                    <input type="checkbox" class="toggle" name="browser-toggle" disabled />
+                    <input type="text" id="browser" name="browser" />
+                </div>
 
-            <div class="row">
-                <label>Directories</label>
-                <input type="checkbox" class="toggle" name="directories-toggle" />
-                <ul>
-                    <li>
-                        <label>lib</label>
-                        <input type="checkbox" class="toggle" name="lib-toggle" disabled />
-                        <input type="text" name="lib">
-                    </li>
-                    <li>
-                        <label>dist</label>
-                        <input type="checkbox" class="toggle" name="dist-toggle" disabled />
-                        <input type="text" name="dist">
-                    </li>
-                </ul>
-            </div>
+                <div class="row">
+                    <label>Dependencies</label>
+                    <input type="checkbox" class="toggle" name="dependencies-toggle" disabled />
+                    <button class="add">Add</button>
+                    <ul id="dependencies" class="pairs"></ul>
+                </div>
 
-            <div class="row">
-                <label>files</label>
-                <input type="checkbox" class="toggle" name="files-toggle" disabled />
-                <button class="add">Add</button>
-                <ul id="files"></ul>
-            </div>
+                <div class="row">
+                    <label>Format</label>
+                    <input type="checkbox" class="toggle" name="format-toggle" disabled />
+                    <select id="format" name="format">
+                        <option value="">Please select</option>
+                        <option value="global">global</option>
+                        <option value="amd">amd</option>
+                        <option value="cjs">cjs</option>
+                        <option value="es6">es6</option>
+                    </select>
+                </div>
 
-            <div class="row">
-                <label>ignore</label>
-                <input type="checkbox" class="toggle" name="ignore-toggle" disabled />
-                <button class="add">Add</button>
-                <ul id="ignore"></ul>
-            </div>
+                <div class="row">
+                    <label>Directories</label>
+                    <input type="checkbox" class="toggle" name="directories-toggle" />
+                    <ul>
+                        <li>
+                            <label>lib</label>
+                            <input type="checkbox" class="toggle" name="lib-toggle" disabled />
+                            <input type="text" name="lib">
+                        </li>
+                        <li>
+                            <label>dist</label>
+                            <input type="checkbox" class="toggle" name="dist-toggle" disabled />
+                            <input type="text" name="dist">
+                        </li>
+                    </ul>
+                </div>
 
-            <div class="row">
-                <label>Map</label>
-                <input type="checkbox" class="toggle" name="map-toggle" disabled />
-                <button class="add">Add</button>
-                <ul id="map" class="pairs"></ul>
-            </div>
+                <div class="row">
+                    <label>files</label>
+                    <input type="checkbox" class="toggle" name="files-toggle" disabled />
+                    <button class="add">Add</button>
+                    <ul id="files" class="list"></ul>
+                </div>
+
+                <div class="row">
+                    <label>ignore</label>
+                    <input type="checkbox" class="toggle" name="ignore-toggle" disabled />
+                    <button class="add" class="list">Add</button>
+                    <ul id="ignore" class="list"></ul>
+                </div>
+
+                <div class="row">
+                    <label>Map</label>
+                    <input type="checkbox" class="toggle" name="map-toggle" disabled />
+                    <button class="add">Add</button>
+                    <ul id="map" class="pairs"></ul>
+                </div>
+            </div> <!-- override -->
 
             <h3>Does this package contain global files which need to be shimmed?</h3>
 
@@ -118,7 +118,7 @@
                         <label>deps: </label>
                         <input type="checkbox" class="toggle" name="deps-toggle" />
                         <button class="add">Add</button>
-                        <ul id="deps"></ul>
+                        <ul id="deps" class="list"></ul>
                     </li>
                     <li class="row">
                         <label>exports: </label>
@@ -142,21 +142,23 @@
                     </li>
                 </ul>
             </div>
+        </div>
+    </div> <!-- row -->
 
+    <div class="row fixed">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <h3>Entry to go into registry.json of jspm registry</h3>
+            <pre id="registry-output"></pre>
+            <h3>Path for override file in jspm registry</h3>
+            <pre id="directory-output"></pre>
+            <h3>Contents of override file</h3>
+            <pre id="override-output"></pre>
         </div>
     </div>
-    <div class="col">
-        <h3>Entry to go into registry.json of jspm registry</h3>
-        <textarea id="registry-output" disabled></textarea>
-        <h3>Path for override file in jspm registry</h3>
-        <input id="directory-output" disabled />
-        <h3>Contents of override file</h3>
-        <textarea id="override-output" disabled></textarea>
-    </div>
 
-</div>
+</div> <!-- container -->
 
-<script src="js/jquery.min.js"></script>
+<script src="js/jquery.js"></script>
 <script src="js/main.js"></script>
 
 </body>
