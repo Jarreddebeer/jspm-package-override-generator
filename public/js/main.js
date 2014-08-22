@@ -1,5 +1,5 @@
 
-// Package details
+// DOM elements
 
 var $registry = $('input[name="registry"]')
   , $url = $('input[name="url"]')
@@ -34,7 +34,6 @@ var $registry = $('input[name="registry"]')
   , $directory_out = $('#directory-output')
   , $override_out = $('#override-output');
 
-// templates
 
 function getTemplate(name) {
     var templates = {
@@ -49,39 +48,39 @@ function getTemplate(name) {
 
 // helpers
 
-/**
- * $elements with 'name' attributes are not generated dynamically and considered 'Stable'
- * @param (DOM) $el
- * @return (boolean)
- **/
+// $elements with 'name' attributes have not been generated dynamically and considered 'Stable'
+// @param (DOM) $el
+// @return (boolean)
 function isStable($el) {
     return typeof $el.attr('name') != 'undefined';
 }
 
-/**
- * Find the name of the Stable field from which
- * the (dynamically generated) Unstable field is associated
- * @param (DOM) Unstable field $element
- * @return (String) name attribute
- **/
+// Get the name attribute of the Stable field, parent of the Unstable field
+// @param (DOM) Unstable field
+// @return (String) name attribute
 function getName($el) {
     return $el.closest('.row').find('input[type="checkbox"]').attr('name').split('-')[0];
 }
 
+// Sets the toggle checkbox field, activating/deactivating the property
+// @param (DOM) $el
+// @param (Boolean)
 function setToggleField($el, v) {
     var $chkbx = getToggleField($el);
     $chkbx.prop('checked', v);
 }
 
+// Selects the toggle field from the provided input $el
+// @param (DOM) sibling element
+// @return (DOM)
 function getToggleField($el) {
     return $el.parent().find('> input[type="checkbox"].toggle');
 }
 
-/**
- * Get the accompanying $ul list of Unstable fields
- * @param (DOM) el
- * @return ($DOM) $ul
- **/
+// Get the accompanying $ul list of Unstable fields,
+// either at 1 or 2 levels of depth from the main .row
+// @param (DOM) el
+// @return (DOM) ul
 function getUl(el, level) {
     var $row = $(el).closest('.row')
       , nest_level = arguments[1] || $row.data('ul-level');
@@ -89,7 +88,7 @@ function getUl(el, level) {
     return $row.find('> ul');
 }
 
-// global variables
+// Stable override variables
 
 var dependencies = {};
 var files = [];
@@ -97,26 +96,23 @@ var ignore = [];
 var map = {};
 var deps = [];
 
-// private
+// Stable field helpers
 
-/**
- * Get the names of files from the dynamic 'files' fields
- * @param (DOM) $ul element
- **/
+// Get the names of files from the dynamic 'files' fields list
+// @param (DOM) $ul
+// @return (Array)
 function getArrayList($ul) {
     var ary = [];
     $ul.children().each(function(i, li) {
         var v = $(li).children('input').val();
         if (v) ary.push(v);
     });
-    console.log(ary);
     return ary;
 }
 
-/**
- * Get the names and version numbers of dependencies
- * @param (DOM) $ul element
- **/
+// Get the names and version numbers of dependencies
+// @param (DOM) $ul
+// @return (Object)
 function getObjectList($ul) {
     obj = {};
     $ul.children().each(function(i, li) {
@@ -128,30 +124,53 @@ function getObjectList($ul) {
     return obj;
 }
 
-var parse = {
-    'files': function() {
-        files = getArrayList($('#files'));
-    },
-    'dependencies': function() {
-        dependencies = getObjectList($('#dependencies'));
-    },
-    'ignore': function() {
-        ignore = getArrayList($('#ignore'));
-    },
-    'map': function() {
-        map = getObjectList($('#map'));
-    },
-    'deps': function() {
-        deps = getArrayList($('#deps'));
+// map of methods for setting the Stable override variables based on the
+// Unstable fields which have been dynamically added/removed/edited
+function refreshStableVar(name) {
+    switch (name) {
+        case 'files':
+            files = getArrayList($('#files'));
+            break;
+        case 'dependencies':
+            dependencies = getObjectList($('#dependencies'));
+            break;
+        case 'ignore':
+            ignore = getArrayList($('#ignore'));
+            break;
+        case 'map':
+            map = getObjectList($('#map'));
+            break;
+        case 'deps':
+            deps = getArrayList($('#deps'));
+            break;
     }
 }
 
-// public
+// Empties the Stable variable
+// @param (DOM)
+function emptyStableVar($ul) {
+    var name = getName($ul);
+    switch (name) {
+        case 'dependencies':
+            dependencies = {};
+            break;
+        case 'files':
+            files = [];
+            break;
+        case 'map':
+            map = {};
+            break;
+        case 'deps':
+            deps = [];
+            break;
+    }
+}
 
-/**
- * Parse text fields, activating Stable fields if value is non-empty
- * or run the appropriate method on Unstable fields.
- **/
+//
+
+// Parse text field on blur, activating Stable fields if value is non-empty
+// or run appropriate method parsing on Unstable fields.
+// @param (Event)
 function parseField(e) {
     e.stopPropagation();
     var $el = $(this);
@@ -161,94 +180,72 @@ function parseField(e) {
             active = $el.val().length > 0;
         else if ($el.is('select'))
             active = $el.val() != '';
-        else { /* TODO: throw error */ }
+        else { /* TODO: throw error, unhandled field */ }
         setToggleField($el, active);
     }
-    else parse[getName($el)]();
+    else refreshStableVar(getName($el));
+    render();
 }
 
-/**
- * Toggle the display of the Unstable fields related to the property
- **/
+// Toggle the display of the Unstable fields related to the Stable property
+// @param (Event)
 function toggleSubfields(e) {
     e.stopPropagation();
     $ul = getUl(this, 1);
     $ul.toggleClass('visible');
 }
 
-/**
- * Add a row of Unstable fields to the $ul
- **/
+// Add a row of Unstable fields to the $ul, these can either be for a list (Array),
+// or key-value (Object). The appropriate html template is retrieved based on this.
+// @event (Button) click
+// @param (Event)
 function addFieldRow(e) {
     e.stopPropagation();
-    var $ul = getUl(this)
-      , id  = $ul.attr('id');
+    var $ul  = getUl(this)
+      , id   = $ul.attr('id')
+      , $tgl = getToggleField($ul);
     $ul.append(getTemplate(id));
-    if (!$ul.children().length == 0) {
+    if (!isChecked($tgl)) {
         setToggleField($(this), true);
         $ul.addClass('visible');
     }
+    render();
 }
 
-/**
- * Remove a row of Unstable fields from the $ul
- **/
-function remFieldRow() {
+// Remove a row of Unstable fields from the $ul
+// @event (Button) click
+function remFieldRow(e) {
+    e.stopPropagation();
     var btn = this
       , $ul = getUl(btn);
     $(btn).parent().remove();
     if ($ul.children().length == 0) {
         setToggleField($ul, false);
         $ul.removeClass('visible');
-        cleanField($ul);
+        emptyStableVar($ul);
     } else {
-        parse[getName($ul)]();
+        refreshStableVar(getName($ul));
     }
+    render();
 }
 
-/**
- * Empties the associated variable
- **/
-function cleanField($ul) {
-    var name = getName($ul);
-    // TODO: abstract this
-    if (name == 'dependencies')
-        dependencies = {};
-    else if (name == 'files')
-        files = [];
-    else if (name == 'map')
-        map = {};
-    else if (name == 'deps')
-        deps = [];
+// Checks if a $checkbox is checked or not
+// @param (DOM) $checkbox
+// @return (Boolean)
+function isChecked($chkbx) {
+    return $chkbx.is(':checked');
 }
 
-function isChecked($el) {
-    return $el.is(':checked');
-}
-
+// Mediator for rendering the appropriate json code block
+// Called by change/add/remove to fields from 'parseField', 'addFieldRow', 'remFieldRow'
 function render() {
-    var $el = $(this)
-      , name = getName($el);
-    switch (name) {
-        case 'registry':
-            renderRegistry();
-            renderDirectory();
-            break;
-        case 'url':
-            setRegistry();
-            renderRegistry();
-            renderDirectory();
-            break;
-        case 'version':
-            renderRegistry();
-            renderDirectory();
-            break;
-        default:
-            renderOverride();
-            break;
-    }
+    renderRegistry();
+    renderDirectory();
+    renderOverride();
 }
 
+// Render the actual Override json file contents
+// A property on the json object will only be rendered if the toggle checkbox is active
 function renderOverride() {
     o = {};
 
@@ -308,69 +305,74 @@ function renderOverride() {
 
 }
 
+// Render the entry which needs to go into the  registry.json file,
+// over at https://github.com/jspm/registry/blob/master/registry.json
 function renderRegistry() {
     var registry = $registry.val()
       , url = $url.val()
       , out = '...\n';
-    switch (registry) {
-        case 'github':
-            out += 'github:' + getGithubUsername(url) + '/' + getGithubRepository(url);
-            break;
-        case 'npm':
-            out += 'npm:' + getNpmName(url);
-            break;
-    }
+    if (url && registry == 'github')
+        out += 'github:' + getGithubUser(url) + '/' + getGithubRepo(url);
+    else if (url && registry == 'npm')
+        out += 'npm:' + getNpmName(url);
     out += '\n...';
     out = syntaxHighlight(out);
     $registry_out.html(out);
 }
-//
-// https://github.com/dir/repo -> dir
-function getGithubUsername(url) {
+
+// Get the username from a Github url
+// @param (String) https://github.com/user/repo
+// @return (String) user
+function getGithubUser(url) {
     return url.split('.')[1].split('/')[1];
 }
 
-// https://github.com/dir/repo -> repo
-function getGithubRepository(url) {
+// Get the respository from a Github url
+// @param (String) https://github.com/user/repo
+// @return (String) repo
+function getGithubRepo(url) {
     return url.split('.')[1].split('/')[2];
 }
 
-// https://www.npmjs.org/package/name -> name
+// Get the name of a package from an npm url
+// @param (String) https://www.npmjs.org/package/name
+// @return (String) name
 function getNpmName(url) {
     return url.split('.')[2].split('/')[2];
 }
 
+// Render the path of the Override file which needs to be created,
+// A subfolder of https://github.com/jspm/registry/tree/master/package-overrides
 function renderDirectory() {
     var reg = $registry.val()
       , url = $url.val()
       , ver = $version.val()
       , out = 'jspm/registry/' + reg + '/';
-
-    switch (reg) {
-        case 'github':
-            var dir = getGithubRepository(url)
-              , repo = getGithubRepository(url);
-            out += dir + '/' + repo;
-            break;
-        case 'npm':
-            var repo = getNpmName(url);
-            out += repo;
+    if (url && reg == 'github') {
+        var user = getGithubUser(url)
+          , repo = getGithubRepo(url);
+        out += user + '/' + repo;
+    } else if (url && reg == 'npm') {
+        out += getNpmName(url);
     }
     out += '@' + ver + '.json';
     out = syntaxHighlight(out);
     $directory_out.html(out);
 }
 
+// Set the value of the registry field, triggered by input on the url field
+// It is a radio field, which is programatically 'checked'
 function setRegistry() {
     var u = $url.val()
       , reg;
     if (u.indexOf('github') != -1) reg = 'github';
     else if (u.indexOf('npm') != -1) reg = 'npm';
     $registry.val(reg).prop('checked', true).trigger('change');
-
 }
 
-// thanks Pumbaa80 http://stackoverflow.com/questions/4810841/how-can-i-pretty-print-json-using-javascript
+// Parse text code generated in Override json, wrapping words with spans for highlighting
+// Library-less implementation, code posted by Pumbaa80
+// http://stackoverflow.com/questions/4810841/how-can-i-pretty-print-json-using-javascript
 function syntaxHighlight(json) {
     if (typeof json != 'string') {
          json = JSON.stringify(json, undefined, 2);
@@ -393,7 +395,22 @@ function syntaxHighlight(json) {
     });
 }
 
-function setResultColumnFixed() {
+// events from user input
+
+$rows.on('keyup',  'input[type="text"]',            parseField);
+$rows.on('keyup',  'input[name="url"]',             setRegistry);
+$rows.on('change', 'select',                        parseField);
+$rows.on('change', 'input[type="radio"]',           parseField);
+$rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
+$rows.on('click',  'button.add',                    addFieldRow);
+$rows.on('click',  'button.remove',                 remFieldRow);
+$rows.on('change', 'input[type="checkbox"]',        render);
+
+// run on document ready
+
+// Set the column containing the rendered code to be fixed, allowing it to remain
+// in view when scrolling through the input fields.
+function setRenderColumnFixed() {
     var $fixed = $('.fixed')
       , $input = $('#input')
       , left = $input.offset().left + $input.outerWidth()
@@ -401,26 +418,4 @@ function setResultColumnFixed() {
     $fixed.css('left', left);
     $fixed.css('height', height);
 }
-setResultColumnFixed();
-
-var renderOverrideEvent  = new CustomEvent('render-override');
-var renderRegistryEvent  = new CustomEvent('render-registry');
-var renderDirectoryEvent = new CustomEvent('render-directory');
-
-document.addEventListener('render-override' , renderOverride);
-document.addEventListener('render-registry' , renderRegistry);
-document.addEventListener('render-directory', renderDirectory);
-
-$rows.on('keyup', 'input[type="text"]', parseField);
-$rows.on('keyup', 'input[type="text"]', render);
-$rows.on('change', 'select', parseField);
-$rows.on('change', 'input[type="radio"]', parseField);
-
-$rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
-$rows.on('change', 'input[type="checkbox"]', function() { document.dispatchEvent(renderOverrideEvent) });
-$rows.on('change', 'select', function() { document.dispatchEvent(renderOverrideEvent) });
-$rows.on('click', 'button.add', addFieldRow);
-$rows.on('click', 'button.add', function() { document.dispatchEvent(renderOverrideEvent) });
-$rows.on('click', 'button.remove', remFieldRow);
-$rows.on('click', 'button.remove', function() { document.dispatchEvent(renderOverrideEvent) });
-
+setRenderColumnFixed();
