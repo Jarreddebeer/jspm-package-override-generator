@@ -400,14 +400,14 @@ function syntaxHighlight(json) {
 
 // events from user input
 
-$rows.on('keyup',  'input[type="text"]',            parseField);
-$rows.on('keyup',  'input[name="url"]',             setRegistry);
-$rows.on('change', 'select',                        parseField);
-$rows.on('change', 'input[type="radio"]',           parseField);
-$rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields);
-$rows.on('click',  'button.add',                    addFieldRow);
-$rows.on('click',  'button.remove',                 remFieldRow);
-$rows.on('change', 'input[type="checkbox"]',        render);
+$rows.on('keyup' , 'input[type="text"]'           , parseField      );
+$rows.on('keyup' , 'input[name="url"]'            , setRegistry     );
+$rows.on('change', 'select'                       , parseField      );
+$rows.on('change', 'input[type="radio"]',         , parseField      );
+$rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields );
+$rows.on('click' , 'button.add'                   , addFieldRow     );
+$rows.on('click' , 'button.remove'                , remFieldRow     );
+$rows.on('change', 'input[type="checkbox"]'       , render          );
 
 // run on document ready
 
