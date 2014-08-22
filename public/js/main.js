@@ -35,6 +35,11 @@ var $registry = $('input[name="registry"]')
   , $override_out = $('#override-output');
 
 
+// helpers
+
+// Get HTML template for the type of row of Unstable fields to be added
+// @param (String) name
+// @return (String) html
 function getTemplate(name) {
     var templates = {
         'map':          '<label>&nbsp;</label><input type="text" /><span>:</span><input type="text" /><button class="remove">Remove</button>',
@@ -45,8 +50,6 @@ function getTemplate(name) {
     }
     return '<li>' + templates[name] + '</li>';
 }
-
-// helpers
 
 // $elements with 'name' attributes have not been generated dynamically and considered 'Stable'
 // @param (DOM) $el
