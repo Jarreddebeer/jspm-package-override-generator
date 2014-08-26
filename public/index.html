@@ -5,6 +5,7 @@
     <title>jspm Package Override Generator</title>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Cousine' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
@@ -37,12 +38,6 @@
 
             <div id="override">
                 <h3>Override settings</h3>
-
-                <div class="row">
-                    <label>Main</label>
-                    <input type="checkbox" class="toggle" name="main-toggle" disabled />
-                    <input type="text" id="main" name="main" />
-                </div>
 
                 <div class="row">
                     <label>Browser</label>
@@ -147,11 +142,11 @@
 
     <div class="row fixed">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <h3>Entry to go into registry.json of jspm registry</h3>
+            <p>registry.json</p>
             <pre id="registry-output"></pre>
-            <h3>Path for override file in jspm registry</h3>
+            <p>Path to override</p>
             <pre id="directory-output"></pre>
-            <h3>Contents of override file</h3>
+            <p>Override file</p>
             <pre id="override-output"></pre>
         </div>
     </div>

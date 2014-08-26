@@ -4,7 +4,6 @@
 var $registry = $('input[name="registry"]')
   , $url = $('input[name="url"]')
   , $version = $('input[name="version"]')
-  , $main = $('#main')
   , $rows = $('.row')
 
   , $browser = $('input[name="browser"]')
@@ -15,7 +14,6 @@ var $registry = $('input[name="registry"]')
   , $minify = $('#minify')
   , $transpile = $('#transpile')
 
-  , $main_tgl = $('input[name="main-toggle"]')
   , $browser_tgl = $('input[name="browser-toggle"]')
   , $dependencies_tgl = $('input[name="dependencies-toggle"]')
   , $lib_tgl = $('input[name="lib-toggle"]')
@@ -252,8 +250,6 @@ function render() {
 function renderOverride() {
     o = {};
 
-    if (isChecked($main_tgl))
-        o.main = $main.val();
     if (isChecked($browser_tgl))
         o.browser = $browser.val();
     if (isChecked($dependencies_tgl) && !$.isEmptyObject(dependencies))
@@ -403,7 +399,7 @@ function syntaxHighlight(json) {
 $rows.on('keyup' , 'input[type="text"]'           , parseField      );
 $rows.on('keyup' , 'input[name="url"]'            , setRegistry     );
 $rows.on('change', 'select'                       , parseField      );
-$rows.on('change', 'input[type="radio"]',         , parseField      );
+$rows.on('change', 'input[type="radio"]'          , parseField      );
 $rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields );
 $rows.on('click' , 'button.add'                   , addFieldRow     );
 $rows.on('click' , 'button.remove'                , remFieldRow     );
