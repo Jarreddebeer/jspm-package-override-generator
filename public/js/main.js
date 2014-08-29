@@ -410,11 +410,13 @@ $rows.on('change', 'input[type="checkbox"]'       , render          );
 // Set the column containing the rendered code to be fixed, allowing it to remain
 // in view when scrolling through the input fields.
 function setRenderColumnFixed() {
-    var $fixed = $('.fixed')
+    var $code = $('#code')
       , $input = $('#input')
       , left = $input.offset().left + $input.outerWidth()
       , height = $(window).height();
-    $fixed.css('left', left);
-    $fixed.css('height', height);
+    console.log(left);
+    $code.css('left', left);
+    $code.css('height', height);
+    $input.css('height', height);
 }
 setRenderColumnFixed();

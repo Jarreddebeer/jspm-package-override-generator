@@ -83,6 +83,16 @@ textarea {
     height: auto;
 }
 
+/* STYLING */
+
+#input {
+    border-right: 1px solid #CCC;
+    overflow: scroll;
+}
+.fixed {
+    background: grey;
+}
+
 /* LAYOUT */
 
 .row {
@@ -104,10 +114,13 @@ textarea {
     width: 49.5%;
 }
 
-.fixed {
+#code {
     position: fixed;
     top: 0;
     overflow: scroll;
+    width: 100%;
+    margin-left: 20px;
+    margin-top: 20px;
 }
 
 /* Bootstrap overrides */
