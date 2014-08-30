@@ -5,7 +5,7 @@ var $package = $('input[name="package"]')
   , $version = $('input[name="version"]')
   , $rows = $('.row')
 
-  , $browser = $('input[name="browser"]')
+  , $main = $('input[name="main"]')
   , $format = $('#format')
   , $lib = $('input[name="lib"]')
   , $dist = $('input[name="dist"]')
@@ -13,7 +13,7 @@ var $package = $('input[name="package"]')
   , $minify = $('#minify')
   , $transpile = $('#transpile')
 
-  , $browser_tgl = $('input[name="browser-toggle"]')
+  , $main_tgl = $('input[name="main-toggle"]')
   , $dependencies_tgl = $('input[name="dependencies-toggle"]')
   , $lib_tgl = $('input[name="lib-toggle"]')
   , $dist_tgl = $('input[name="dist-toggle"]')
@@ -266,8 +266,8 @@ function render() {
 function renderOverride() {
     o = {};
 
-    if (isChecked($browser_tgl))
-        o.browser = $browser.val();
+    if (isChecked($main_tgl))
+        o.main = $main.val();
     if (isChecked($dependencies_tgl) && !$.isEmptyObject(dependencies))
         o.dependencies = dependencies;
     if (isChecked($format_tgl))
@@ -323,7 +323,7 @@ function renderOverride() {
 // Render the entry which needs to go into the  registry.json file,
 // over at https://github.com/jspm/registry/blob/master/registry.json
 function renderRegistry() {
-    var reg = $('input[name="registry"]:checked').val()
+    var reg = $('input[name="endpoint"]:checked').val()
       , pkg = $package.val()
       , out = reg + ':' + pkg;
     out = syntaxHighlight(out);
@@ -333,7 +333,7 @@ function renderRegistry() {
 // Render the path of the Override file which needs to be created,
 // A subfolder of https://github.com/jspm/registry/tree/master/package-overrides
 function renderDirectory() {
-    var reg = $('input[name="registry"]:checked').val()
+    var reg = $('input[name="endpoint"]:checked').val()
       , pkg = $package.val()
       , ver = $version.val()
       , out = 'jspm/registry/package-overrides/' + reg + '/' + pkg;
