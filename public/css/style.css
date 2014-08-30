@@ -10,6 +10,7 @@ html, body {
 
 input {
     margin: 10px 0;
+    padding: 5px;
 }
 label {
     width: 25%;
@@ -17,7 +18,7 @@ label {
     margin: 10px 0;
 }
 input[type="text"] {
-    width: 68%;
+    width: 234px;
 }
 input[type="radio"] + label {
     width: auto;
@@ -25,6 +26,10 @@ input[type="radio"] + label {
 }
 input.toggle {
     margin-right: 10px;
+}
+select.form-control {
+    width: 234px;
+    display: inline-block;
 }
 .row div.row {
     margin-left: 0;
@@ -36,18 +41,21 @@ input.toggle {
     padding: 0;
 }
 .row ul.list input[type="text"] {
-    width: 54%;
+    width: 200px;
 }
 .row ul.pairs input[type="text"] {
-    width: 25%;
+    width: 95px;
 }
 .row ul.pairs span {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 2px;
+    margin-right: 2px;
 }
 .row ul label {
     margin-left: 20px;
-    margin-right: 10px;
+    margin-right: 18px;
+}
+.row ul ul label {
+    margin-right: 25px;
 }
 .row ul input[name] {
     margin-left: -30px;
@@ -57,7 +65,8 @@ input.toggle {
     margin-left: 0px;
 }
 .row ul button {
-    margin-left: 10px;
+    margin-left: 0px;
+    -webkit-border-radius: 0 3px 3px 0;
 }
 .row ul li.row {
     margin-left: 0;
@@ -85,13 +94,27 @@ textarea {
 
 /* STYLING */
 
+body {
+}
+
 #input {
+    background: #EEE;
     border-right: 1px solid #CCC;
     overflow: scroll;
 }
 .fixed {
     background: grey;
 }
+
+pre {
+    padding: 15px;
+    margin: 0;
+}
+.string { color: #dd1144; }
+.number { color: #dd1144; }
+.boolean { color: #dd1144; }
+.null { color: #dd1144; }
+.key { color: navy; }
 
 /* LAYOUT */
 
@@ -120,11 +143,15 @@ textarea {
     overflow: scroll;
     width: 100%;
     margin-left: 20px;
-    margin-top: 20px;
 }
 
 /* Bootstrap overrides */
 
 .container {
     width: 100%;
+}
+
+pre {
+    background: none;
+    border: 1px solid #EEE;
 }

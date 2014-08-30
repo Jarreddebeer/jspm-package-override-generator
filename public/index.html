@@ -12,32 +12,34 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="input">
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12" id="input">
             <div id="package">
                 <h3>Package Details</h3>
-
-                <div class="row">
-                    <label>Package Url</label>
-                    <input type="checkbox" class="toggle" name="url-toggle" disabled />
-                    <input type="text" name="url" placeholder="Enter url to source" />
-                </div>
+                <hr />
 
                 <div class="row">
                     <label>Registry</label>
                     <input type="checkbox" class="toggle" name="registry-toggle" disabled />
-                    <input type="radio" id="registry-github" name="registry" value="github" disabled /><label for="registry-github">Github</label>
-                    <input type="radio" id="registry-npm" name="registry" value="npm" disabled /><label for="registry-npm">npm</label>
+                    <input type="radio" id="registry-github" name="registry" value="github" /><label for="registry-github">Github</label>
+                    <input type="radio" id="registry-npm" name="registry" value="npm" /><label for="registry-npm">npm</label>
+                </div>
+
+                <div class="row">
+                    <label>Package</label>
+                    <input type="checkbox" class="toggle" name="package-toggle" disabled />
+                    <input type="text" name="package" placeholder="Package path" />
                 </div>
 
                 <div class="row">
                     <label>Version</label>
                     <input type="checkbox" class="toggle" name="version-toggle" disabled />
-                    <input type="text" name="version" placeholder="Version number from tags in repo" />
+                    <input type="text" name="version" placeholder="Version number" />
                 </div>
             </div>
 
             <div id="override">
                 <h3>Override settings</h3>
+                <hr />
 
                 <div class="row">
                     <label>Browser</label>
@@ -48,14 +50,14 @@
                 <div class="row">
                     <label>Dependencies</label>
                     <input type="checkbox" class="toggle" name="dependencies-toggle" disabled />
-                    <button class="add">Add</button>
+                    <button class="add btn btn-primary">Add</button>
                     <ul id="dependencies" class="pairs"></ul>
                 </div>
 
                 <div class="row">
                     <label>Format</label>
                     <input type="checkbox" class="toggle" name="format-toggle" disabled />
-                    <select id="format" name="format">
+                    <select id="format" name="format" class="form-control">
                         <option value="">Please select</option>
                         <option value="global">global</option>
                         <option value="amd">amd</option>
@@ -84,26 +86,27 @@
                 <div class="row">
                     <label>files</label>
                     <input type="checkbox" class="toggle" name="files-toggle" disabled />
-                    <button class="add">Add</button>
+                    <button class="add btn btn-primary">Add</button>
                     <ul id="files" class="list"></ul>
                 </div>
 
                 <div class="row">
                     <label>ignore</label>
                     <input type="checkbox" class="toggle" name="ignore-toggle" disabled />
-                    <button class="add" class="list">Add</button>
+                    <button class="add btn btn-primary" class="list">Add</button>
                     <ul id="ignore" class="list"></ul>
                 </div>
 
                 <div class="row">
                     <label>Map</label>
                     <input type="checkbox" class="toggle" name="map-toggle" disabled />
-                    <button class="add">Add</button>
+                    <button class="add btn btn-primary">Add</button>
                     <ul id="map" class="pairs"></ul>
                 </div>
             </div> <!-- override -->
 
-            <h3>Does this package contain global files which need to be shimmed?</h3>
+            <h3>Shim for global files</h3>
+            <hr />
 
             <div class="row" data-ul-level="2">
                 <label for="shim">Shim</label>
@@ -112,7 +115,7 @@
                     <li class="row">
                         <label>deps: </label>
                         <input type="checkbox" class="toggle" name="deps-toggle" />
-                        <button class="add">Add</button>
+                        <button class="add btn btn-primary">Add</button>
                         <ul id="deps" class="list"></ul>
                     </li>
                     <li class="row">
@@ -142,12 +145,18 @@
 
     <div id="code">
         <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                <p>registry.json</p>
-                <pre id="registry-output"></pre>
-                <p>Path to override</p>
-                <pre id="directory-output"></pre>
-                <p>Override file</p>
+            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                <h3>JSPM registry changes</h3>
+                <p>Send a pull request with changes listed below to <a href="https://github.com/jspm/registry" target="_blank">https://github.com/jspm/registry</a></p>
+                <hr />
+                <p>
+                    <label><a href="https://github.com/jspm/registry/blob/master/registry.json" target="_blank">registry.json</a> entry</label>
+                    <span id="registry-output"></span>
+                </p>
+                <p>
+                    <label>Override file</label>
+                    <span id="directory-output"></span>
+                </p>
                 <pre id="override-output"></pre>
             </div>
         </div>

@@ -1,8 +1,7 @@
 
 // DOM elements
 
-var $registry = $('input[name="registry"]')
-  , $url = $('input[name="url"]')
+var $package = $('input[name="package"]')
   , $version = $('input[name="version"]')
   , $rows = $('.row')
 
@@ -40,11 +39,11 @@ var $registry = $('input[name="registry"]')
 // @return (String) html
 function getTemplate(name) {
     var templates = {
-        'map':          '<label>&nbsp;</label><input type="text" /><span>:</span><input type="text" /><button class="remove">Remove</button>',
-        'deps':         '<label>&nbsp;</label><input type="text" /><button class="remove">Remove</button>',
-        'files':        '<label>&nbsp;</label><input type="text" /><button class="remove">Remove</button>',
-        'ignore':       '<label>&nbsp;</label><input type="text" /><button class="remove">Remove</button>',
-        'dependencies': '<label>&nbsp;</label><input type="text" /><span>:</span><input type="text" /><button class="remove">Remove</button>'
+        'map':          '<label>&nbsp;</label><input type="text" /><span>:</span><input type="text" /><button class="remove btn btn-danger">X</button>',
+        'deps':         '<label>&nbsp;</label><input type="text" /><button class="remove btn btn-danger">X</button>',
+        'files':        '<label>&nbsp;</label><input type="text" /><button class="remove btn btn-danger">X</button>',
+        'ignore':       '<label>&nbsp;</label><input type="text" /><button class="remove btn btn-danger">X</button>',
+        'dependencies': '<label>&nbsp;</label><input type="text" /><span>:</span><input type="text" /><button class="remove btn btn-danger">X</button>'
     }
     return '<li>' + templates[name] + '</li>';
 }
@@ -196,6 +195,22 @@ function toggleSubfields(e) {
     $ul.toggleClass('visible');
 }
 
+// Focus on the first non-empty input field in a list
+function focusInput($ul) {
+    var children = $ul.children();
+    // console.log(children);
+    var inp;
+    for (var i = 0; i < children.length; i++) {
+        inp = $( $(children[i]).find('input[type="text"]')[0] );
+        if (!inp.val())
+            break;
+    }
+    // console.log($(children[i]).val());
+    setTimeout(function() {
+        inp.focus();
+    }, 10);
+}
+
 // Add a row of Unstable fields to the $ul, these can either be for a list (Array),
 // or key-value (Object). The appropriate html template is retrieved based on this.
 // @event (Button) click
@@ -206,6 +221,7 @@ function addFieldRow(e) {
       , id   = $ul.attr('id')
       , $tgl = getToggleField($ul);
     $ul.append(getTemplate(id));
+    focusInput($ul);
     if (!isChecked($tgl)) {
         setToggleField($(this), true);
         $ul.addClass('visible');
@@ -307,66 +323,23 @@ function renderOverride() {
 // Render the entry which needs to go into the  registry.json file,
 // over at https://github.com/jspm/registry/blob/master/registry.json
 function renderRegistry() {
-    var registry = $registry.val()
-      , url = $url.val()
-      , out = '...\n';
-    if (url && registry == 'github')
-        out += 'github:' + getGithubUser(url) + '/' + getGithubRepo(url);
-    else if (url && registry == 'npm')
-        out += 'npm:' + getNpmName(url);
-    out += '\n...';
+    var reg = $('input[name="registry"]:checked').val()
+      , pkg = $package.val()
+      , out = reg + ':' + pkg;
     out = syntaxHighlight(out);
     $registry_out.html(out);
-}
-
-// Get the username from a Github url
-// @param (String) https://github.com/user/repo
-// @return (String) user
-function getGithubUser(url) {
-    return url.split('.')[1].split('/')[1];
-}
-
-// Get the respository from a Github url
-// @param (String) https://github.com/user/repo
-// @return (String) repo
-function getGithubRepo(url) {
-    return url.split('.')[1].split('/')[2];
-}
-
-// Get the name of a package from an npm url
-// @param (String) https://www.npmjs.org/package/name
-// @return (String) name
-function getNpmName(url) {
-    return url.split('.')[2].split('/')[2];
 }
 
 // Render the path of the Override file which needs to be created,
 // A subfolder of https://github.com/jspm/registry/tree/master/package-overrides
 function renderDirectory() {
-    var reg = $registry.val()
-      , url = $url.val()
+    var reg = $('input[name="registry"]:checked').val()
+      , pkg = $package.val()
       , ver = $version.val()
-      , out = 'jspm/registry/' + reg + '/';
-    if (url && reg == 'github') {
-        var user = getGithubUser(url)
-          , repo = getGithubRepo(url);
-        out += user + '/' + repo;
-    } else if (url && reg == 'npm') {
-        out += getNpmName(url);
-    }
+      , out = 'jspm/registry/package-overrides/' + reg + '/' + pkg;
     out += '@' + ver + '.json';
     out = syntaxHighlight(out);
     $directory_out.html(out);
-}
-
-// Set the value of the registry field, triggered by input on the url field
-// It is a radio field, which is programatically 'checked'
-function setRegistry() {
-    var u = $url.val()
-      , reg;
-    if (u.indexOf('github') != -1) reg = 'github';
-    else if (u.indexOf('npm') != -1) reg = 'npm';
-    $registry.val(reg).prop('checked', true).trigger('change');
 }
 
 // Parse text code generated in Override json, wrapping words with spans for highlighting
@@ -397,7 +370,6 @@ function syntaxHighlight(json) {
 // events from user input
 
 $rows.on('keyup' , 'input[type="text"]'           , parseField      );
-$rows.on('keyup' , 'input[name="url"]'            , setRegistry     );
 $rows.on('change', 'select'                       , parseField      );
 $rows.on('change', 'input[type="radio"]'          , parseField      );
 $rows.on('change', 'input[type="checkbox"].toggle', toggleSubfields );
