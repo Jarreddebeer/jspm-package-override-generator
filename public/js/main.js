@@ -8,28 +8,26 @@ var $package = $('input[name="package"]')
   , $main = $('input[name="main"]')
   , $format = $('#format')
   , $lib = $('input[name="lib"]')
-  , $dist = $('input[name="dist"]')
+  , $shim_file = $('input[name="shim-file"]')
   , $exports = $('#exports')
-  , $minify = $('#minify')
-  , $transpile = $('#transpile')
 
   , $main_tgl = $('input[name="main-toggle"]')
   , $dependencies_tgl = $('input[name="dependencies-toggle"]')
   , $lib_tgl = $('input[name="lib-toggle"]')
-  , $dist_tgl = $('input[name="dist-toggle"]')
   , $format_tgl = $('input[name="format-toggle"]')
   , $directories_tgl = $('input[name="directories-toggle"]')
   , $files_tgl = $('input[name="files-toggle"]')
   , $ignore_tpl = $('input[name="ignore-toggle"]')
   , $map_tgl = $('input[name="map-toggle"]')
   , $shim_tgl = $('input[name="shim-toggle"]')
+  , $shim_file_tgl = $('input[name="shim-file-toggle"]')
   , $deps_tgl = $('input[name="deps-toggle"]')
   , $exports_tgl = $('input[name="exports-toggle"]')
-  , $buildConfig_tgl = $('input[name="buildconfig-toggle"]')
 
   , $registry_out = $('#registry-output')
   , $directory_out = $('#directory-output')
-  , $override_out = $('#override-output');
+  , $override_out = $('#override-output')
+  , $cli_out = $('#cli-output');
 
 
 // helpers
@@ -274,12 +272,10 @@ function renderOverride() {
         o.format = $format.val();
 
     if (isChecked($directories_tgl)) {
-        if (isChecked($lib_tgl) || isChecked($dist_tgl)) {
+        if (isChecked($lib_tgl)) {
             o.directories = {}
             if (isChecked($lib_tgl))
                 o.directories.lib = $lib.val();
-            if (isChecked($dist_tgl))
-                o.directories.dist = $dist.val();
         }
     }
 
@@ -291,31 +287,39 @@ function renderOverride() {
         o.map = map;
 
     if (isChecked($shim_tgl)) {
-        if (isChecked($deps_tgl) && deps.length > 0 || isChecked($exports_tgl)) {
+        if (isChecked($shim_file_tgl)) {
+            $shim_file.parent().siblings().removeClass('hidden');
             o.shim = {};
-            if (isChecked($deps_tgl) && deps.length > 0)
-                o.shim.deps = deps;
-            if (isChecked($exports_tgl))
-                o.shim.exports = $exports.val();
-        }
-    }
-
-    if (isChecked($buildConfig_tgl)) {
-        if (isChecked($minify) || isChecked($transpile)) {
-            o.buildConfig = {};
-            if (isChecked($minify))
-                o.buildConfig.minify = true;
-            if (isChecked($transpile))
-                o.buildConfig.transpile = true;
+            var shim_key = $shim_file.val();
+            o.shim[shim_key] = {}
+            var shim_obj = o.shim[shim_key];
+            if (isChecked($deps_tgl) && deps.length > 0 || isChecked($exports_tgl)) {
+                if (isChecked($deps_tgl) && deps.length > 0)
+                    shim_obj.deps = deps;
+                if (isChecked($exports_tgl))
+                    shim_obj.exports = $exports.val();
+            }
+        } else {
+            $shim_file.parent().siblings().addClass('hidden');
         }
     }
 
     if (!$.isEmptyObject(o)) {
-        var out = JSON.stringify(o, null, 2);
-        out = syntaxHighlight(out)
-        $override_out.html(out);
+        var override_out = JSON.stringify(o, null, 2);
+        override_out = syntaxHighlight(override_out)
+        $override_out.html(override_out);
+
+        var reg = $('input[name="endpoint"]:checked').val()
+          , pkg = $package.val();
+        if (reg && pkg) {
+            var cli_out = 'jspm install ' + reg + '/' + pkg + ' -o ' + JSON.stringify(o);
+            $cli_out.html(cli_out);
+        } else {
+            $cli_out.html('');
+        }
     } else {
         $override_out.html('');
+        $cli_out.html('');
     }
 
 }
@@ -386,7 +390,6 @@ function setRenderColumnFixed() {
       , $input = $('#input')
       , left = $input.offset().left + $input.outerWidth()
       , height = $(window).height();
-    console.log(left);
     $code.css('left', left);
     $code.css('height', height);
     $input.css('height', height);

@@ -75,11 +75,6 @@
                             <input type="checkbox" class="toggle" name="lib-toggle" disabled />
                             <input type="text" name="lib">
                         </li>
-                        <li>
-                            <label>dist</label>
-                            <input type="checkbox" class="toggle" name="dist-toggle" disabled />
-                            <input type="text" name="dist">
-                        </li>
                     </ul>
                 </div>
 
@@ -113,6 +108,11 @@
                 <input type="checkbox" class="toggle" name="shim-toggle" />
                 <ul>
                     <li class="row">
+                        <label>file: </label>
+                        <input type="checkbox" class="toggle" name="shim-file-toggle" />
+                        <input type="text" id="shim-file" name="shim-file" />.js
+                    </li>
+                    <li class="row">
                         <label>deps: </label>
                         <input type="checkbox" class="toggle" name="deps-toggle" />
                         <button class="add btn btn-primary">Add</button>
@@ -126,20 +126,6 @@
                 </ul>
             </div>
 
-            <div class="row">
-                <label for="buildconfig">BuildConfig</label>
-                <input type="checkbox" class="toggle" name="buildconfig-toggle" />
-                <ul id="buildConfig">
-                    <li>
-                        <label for="minify">Minify</label>
-                        <input type="checkbox" id="minify" name="minify">
-                    </li>
-                    <li>
-                        <label for="transpile">Transpile</label>
-                        <input type="checkbox" id="transpile" name="transpile">
-                    </li>
-                </ul>
-            </div>
         </div>
     </div> <!-- row -->
 
@@ -158,6 +144,13 @@
                     <span id="directory-output"></span>
                 </p>
                 <pre id="override-output"></pre>
+                <hr />
+
+                <p>
+                    <label>CLI one-liner</label>
+                </p>
+                <span id="cli-output"></span>
+
             </div>
         </div>
     </div>
